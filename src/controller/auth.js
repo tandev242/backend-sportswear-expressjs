@@ -58,15 +58,8 @@ exports.signin = (req, res) => {
             }
             if (user) {
                 const isPassword = await user.authenticate(req.body.password);
-                if (isPassword && user.role === "user") {
+                if (isPassword) {
                     const token = generateJwtToken(user._id, user.role);
-                    const { _id, name, email, role } = user;
-                    res.status(200).json({
-                        token,
-                        user: { _id, name, email, role },
-                    })
-                } else if (isPassword && user.role === "admin") {
-
                     const { _id, name, email, role } = user;
                     res.status(200).json({
                         token,
@@ -74,7 +67,7 @@ exports.signin = (req, res) => {
                     })
                 } else {
                     return res.status(400).json({
-                        message: "Something went wrong"
+                        message: "Email or password incorrect",
                     })
                 }
             } else {
@@ -86,6 +79,13 @@ exports.signin = (req, res) => {
 
         }
     )
+}
+
+exports.signout = (req, res) =>{
+    res.clearCookie("token");
+    res.status(200).json({
+        message: "Signout successfully ....!"
+    })
 }
 
 exports.signinWithGoogle = (req, res) => {

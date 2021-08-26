@@ -31,6 +31,11 @@ exports.addCategory = (req, res) => {
         name,
         slug: `${slugify(name)}-${shortid.generate()}`
     }
+
+    if (req.file) {
+        categoryObj.categoryImage = req.file.filename;
+    }
+
     if (parentId) {
         categoryObj.parentId = parentId;
     }
@@ -58,11 +63,20 @@ exports.getCategories = (req, res) => {
     })
 }
 
-// exports.deleteCategories = (req, res) =>{
-//     const { _id } = req.body;
-//     Category.findOne({_id}).exec((error, category) =>{
-//         if(error) return res.status(400).json({ error });
-//         const categories = [];
-
-//     })
-// }
+exports.deleteCategories = async (req, res) => {
+    const { ids } = req.body.payload;
+    const deletedCategories = [];
+    for (let i = 0; i < ids.length; i++) {
+      const deleteCategory = await Category.findOneAndDelete({
+        _id: ids[i]._id
+      });
+      deletedCategories.push(deleteCategory);
+    }
+  
+    if (deletedCategories.length == ids.length) {
+      res.status(201).json({ message: "Categories removed" });
+    } else {
+      res.status(400).json({ message: "Something went wrong" });
+    }
+  };
+  

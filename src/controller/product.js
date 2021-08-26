@@ -102,8 +102,9 @@ exports.deleteProductById = (req, res) => {
 }
 
 exports.getProducts = async (req, res) => {
-    const products = await Product.find({}).select("_id name price quantity slug description productPictures category")
+    const products = await Product.find({}).select("_id name price quantity slug description productPictures category brand")
         .populate({ path: "category", select: "_id name" })
+        .populate({ path: "brand", select: "_id name" })
         .exec();
     res.status(200).json({ products });
 }

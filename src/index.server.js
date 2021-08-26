@@ -13,7 +13,8 @@ const productRoutes = require('./routes/product');
 const deliveryInfoRoutes = require('./routes/deliveryInfo');
 const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/order');
-
+const initData = require('./routes/initData.admin');
+const path = require("path");
 
 
 env.config();
@@ -35,6 +36,7 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use('/images', express.static(path.join(__dirname, "uploads")));
 app.use("/api", authRoutes);
 app.use("/api", categoryRoutes);
 app.use("/api", brandRoutes);
@@ -42,8 +44,7 @@ app.use("/api", productRoutes);
 app.use("/api", deliveryInfoRoutes);
 app.use("/api", cartRoutes);
 app.use("/api", orderRoutes);
-
-
+app.use("/api", initData);
 
 
 app.listen(process.env.PORT, () => {
