@@ -20,6 +20,10 @@ const orderSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product",
         },
+        sizeId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Size"
+        },
         payablePrice: {
             type: Number,
             required: true

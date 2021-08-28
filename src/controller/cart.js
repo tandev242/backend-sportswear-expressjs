@@ -60,6 +60,7 @@ exports.addToCart = (req, res) => {
 exports.getCartItems = (req, res) => {
     Cart.findOne({ user: req.user._id })
         .populate("cartItems.product", "_id name price productPictures")
+        .populate("cartItems.size", "_id size")
         .exec((error, cart) => {
             if (error) return res.status(400).json({ error })
             if (cart) {
@@ -71,6 +72,10 @@ exports.getCartItems = (req, res) => {
                         price: item.product.price,
                         img: item.product.productPictures[0].img,
                         quantity: item.quantity,
+                    }
+                    cartItems[item.size._id.toString()] = {
+                        _id: item.size._id.toString(),
+                        size: item.size.size,
                     }
                 })
                 res.status(200).json({ cartItems });

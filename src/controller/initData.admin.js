@@ -29,12 +29,19 @@ exports.initData = async (req, res) => {
     const categories = await Category.find({}).exec();
     const brands = await Brand.find({}).exec();
     const products = await Product.find({})
-        .select("_id name price quantity slug description productPictures category brand")
+        .select("_id name price slug description productPictures category brand")
         .populate({ path: "category", select: "_id name" })
         .populate({ path: "brand", select: "_id name" })
+        .populate('sizes')
+        .populate({
+            path: 'sizes', populate: {
+                path: "size", select: "_id size description"
+            }
+        })
         .exec();
     const orders = await Order.find({})
         .populate("items.productId", "name")
+        .populate("items.sizeId", "size")
         .exec();
     res.status(200).json({
         categories: createCategories(categories),

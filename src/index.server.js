@@ -3,7 +3,7 @@ const env = require('dotenv');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require("cors");
-
+const path = require("path");
 
 // region routes
 const authRoutes = require('./routes/auth');
@@ -13,8 +13,10 @@ const productRoutes = require('./routes/product');
 const deliveryInfoRoutes = require('./routes/deliveryInfo');
 const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/order');
-const initData = require('./routes/initData.admin');
-const path = require("path");
+const initDataRoutes = require('./routes/initData.admin');
+const sizeProductRoutes = require('./routes/sizeProduct');
+const sizeRoutes = require('./routes/size');
+
 
 
 env.config();
@@ -44,7 +46,9 @@ app.use("/api", productRoutes);
 app.use("/api", deliveryInfoRoutes);
 app.use("/api", cartRoutes);
 app.use("/api", orderRoutes);
-app.use("/api", initData);
+app.use("/api", initDataRoutes);
+app.use("/api", sizeProductRoutes);
+app.use("/api", sizeRoutes);
 
 
 app.listen(process.env.PORT, () => {

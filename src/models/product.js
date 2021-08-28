@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+sizeProductSchema = require('../models/sizeProduct').schema;
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -12,10 +13,6 @@ const productSchema = new mongoose.Schema({
         unique: true
     },
     price: {
-        type: Number,
-        required: true
-    },
-    quantity: {
         type: Number,
         required: true
     },
@@ -38,6 +35,7 @@ const productSchema = new mongoose.Schema({
             },
         },
     ],
+    sizes: [sizeProductSchema],
     brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
 

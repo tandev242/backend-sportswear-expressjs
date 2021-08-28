@@ -27,6 +27,7 @@ exports.addOrder = (req, res) => {
 
     items.map((item) => {
         const productId = item.productId;
+        const sizeId = item.sizeId;
         if (productId) {
             Cart.updateOne(
                 { user: req.user._id },
@@ -34,6 +35,7 @@ exports.addOrder = (req, res) => {
                     $pull: {
                         cartItems: {
                             product: productId,
+                            size: sizeId
                         },
                     },
                 }
@@ -66,6 +68,7 @@ exports.getOrder = (req, res) => {
     const { orderId } = req.body;
     Order.findOne({ _id: orderId })
         .populate("items.productId", "_id name productPictures")
+        .populate("items.sizeId", "_id size description")
         .lean()
         .exec((error, order) => {
             if (error) return res.status(400).json({ error });
@@ -82,13 +85,14 @@ exports.getOrder = (req, res) => {
 
 
 exports.getOrders = (req, res) => {
-    Order.find({ user: req.user._id})
-    .select("_id totalAmount paymentStatus paymentType orderStatus items")
-    .populate("items.productId", "_id name productPictures")
-    .exec((error, orders) => {
-        if(error) return res.status(400).json({ error });
-        if(orders){
-            res.status(200).json({ orders});
-        }
-    })
+    Order.find({ user: req.user._id })
+        .select("_id totalAmount paymentStatus paymentType orderStatus items")
+        .populate("items.productId", "_id name productPictures")
+        .populate("items.sizeId", "_id size description")
+        .exec((error, orders) => {
+            if (error) return res.status(400).json({ error });
+            if (orders) {
+                res.status(200).json({ orders });
+            }
+        })
 }

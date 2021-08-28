@@ -12,6 +12,10 @@ const cartSchema = new mongoose.Schema({
             required: true,
             ref: "Product",
         },
+        size: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Size"
+        },
         quantity: { type: Number, default: 1 }
     }]
 }, { timestamps: true });
