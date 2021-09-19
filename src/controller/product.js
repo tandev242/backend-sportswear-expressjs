@@ -5,7 +5,8 @@ const slugify = require("slugify");
 
 
 exports.addProduct = (req, res) => {
-    const { name, price, description, sizes, category, brand } = req.body;
+    const { name, price, description, category, brand } = req.body;
+    const sizes = JSON.parse(req.body.sizes);
     let productPictures = [];
 
     if (req.files.length > 0) {
@@ -13,7 +14,7 @@ exports.addProduct = (req, res) => {
             return { img: file.filename };
         });
     }
-    console.log(productPictures.length);
+
     const product = new Product({
         name: name,
         slug: `${slugify(name)}-${shortid.generate()}`,
@@ -148,9 +149,9 @@ exports.getProductById = (req, res) => {
 }
 
 exports.deleteProductById = (req, res) => {
-    const { id } = req.body.payload;
-    if (id) {
-        Product.deleteOne({ _id: id })
+    const { productId } = req.body.payload;
+    if (productId) {
+        Product.deleteOne({ _id: productId })
             .exec((error, result) => {
                 if (error) return res.status(400).json({ error });
                 if (result) {

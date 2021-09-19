@@ -67,16 +67,45 @@ exports.deleteCategories = async (req, res) => {
     const { ids } = req.body.payload;
     const deletedCategories = [];
     for (let i = 0; i < ids.length; i++) {
-      const deleteCategory = await Category.findOneAndDelete({
-        _id: ids[i]._id
-      });
-      deletedCategories.push(deleteCategory);
+        const deleteCategory = await Category.findOneAndDelete({
+            _id: ids[i]._id
+        });
+        deletedCategories.push(deleteCategory);
     }
-  
+
     if (deletedCategories.length == ids.length) {
-      res.status(201).json({ message: "Categories removed" });
+        res.status(201).json({ message: "Categories removed" });
     } else {
-      res.status(400).json({ message: "Something went wrong" });
+        res.status(400).json({ message: "Something went wrong" });
     }
-  };
-  
+};
+
+
+exports.updateCategories = async (req, res) => {
+    const { _id, name, parentId } = req.body;
+    if (name instanceof Array) {
+        for (let i = 0; i < name.length; i++) {
+            const category = {
+                name: name[i]
+            }
+            if (parentId !== "") {
+                category.parentId = parentId;
+            }
+            await Category.findOneAndUpdate({ _id: _id[i] }, category,
+                { new: true }
+            );
+        }
+        res.status(202).json({ message: 'Category updated successfully' })
+    } else {
+        const category = {
+            name,
+        };
+        if (parentId !== "") {
+            category.parentId = parentId;
+        }
+        await Category.findOneAndUpdate({ _id }, category, {
+            new: true,
+        });
+        res.status(202).json({ message: 'Category updated successfully' })
+    }
+};

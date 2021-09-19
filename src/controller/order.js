@@ -20,7 +20,7 @@ exports.addOrder = (req, res) => {
             isCompleted: false,
         },
         {
-            type: 'ordered',
+            type: 'delivered',
             isCompleted: false,
         },
     ]
@@ -83,7 +83,33 @@ exports.getOrder = (req, res) => {
         })
 }
 
+exports.updateOrderStatus = (req, res) => {
+    const { orderId, type } = req.body;
+    Order.findOneAndUpdate({ _id: orderId, "orderStatus.type": type },
+        {
+            $set: {
+                "orderStatus.$": [
+                    { type, date: new Date(), isCompleted: true },
+                ],
+                
+            },
+        }
+    ).exec((error, order) => {
+        if (error) return res.status(400).json({ error });
+        if (order) {
+            res.status(202).json({ order });
+        }
+    });
+}
 
+exports.getCustomerOrders = async (req, res) => {
+    const orders = await Order.find({})
+      .populate("items.productId", "name")
+      .exec();
+    res.status(200).json({ orders });
+  };
+
+  
 exports.getOrders = (req, res) => {
     Order.find({ user: req.user._id })
         .select("_id totalAmount paymentStatus paymentType orderStatus items")

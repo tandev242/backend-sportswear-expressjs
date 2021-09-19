@@ -2,7 +2,8 @@ const Category = require("../models/category");
 const Product = require("../models/product");
 const Order = require("../models/order");
 const Brand = require("../models/brand");
-
+const Size = require("../models/size");
+const User = require("../models/user");
 
 const createCategories = (categories, parentId = null) => {
     const categoryList = [];
@@ -29,7 +30,6 @@ exports.initData = async (req, res) => {
     const categories = await Category.find({}).exec();
     const brands = await Brand.find({}).exec();
     const products = await Product.find({})
-        .select("_id name price slug description productPictures category brand")
         .populate({ path: "category", select: "_id name" })
         .populate({ path: "brand", select: "_id name" })
         .populate('sizes')
@@ -43,10 +43,14 @@ exports.initData = async (req, res) => {
         .populate("items.productId", "name")
         .populate("items.sizeId", "size")
         .exec();
+    const sizes = await Size.find({}).exec();
+    const users = await User.find({}).exec();
     res.status(200).json({
         categories: createCategories(categories),
         brands,
         products,
-        orders
+        orders,
+        sizes,
+        users
     })
 }

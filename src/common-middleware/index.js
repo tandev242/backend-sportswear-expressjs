@@ -1,7 +1,4 @@
-const { response } = require('express');
 const jwt = require('jsonwebtoken');
-const shortid = require('shortid');
-
 
 exports.requireSignin = (req, res, next) => {
     if(req.headers.authorization){
