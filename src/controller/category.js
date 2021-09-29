@@ -33,7 +33,7 @@ exports.addCategory = (req, res) => {
     }
 
     if (req.file) {
-        categoryObj.categoryImage = req.file.filename;
+        categoryObj.categoryImage = req.file.path;
     }
 
     if (parentId) {

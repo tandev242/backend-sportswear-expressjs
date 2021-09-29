@@ -25,7 +25,7 @@ exports.signup = (req, res) => {
                     name,
                     email,
                     password: hash_password,
-                    username: "NM" + shortid.generate()
+                    username: "NM" + shortid.generate(),
                 })
 
                 _user.save((error, user) => {
@@ -81,7 +81,7 @@ exports.signin = (req, res) => {
     )
 }
 
-exports.signout = (req, res) =>{
+exports.signout = (req, res) => {
     res.clearCookie("token");
     res.status(200).json({
         message: "Signout successfully ....!"

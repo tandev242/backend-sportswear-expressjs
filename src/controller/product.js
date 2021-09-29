@@ -11,7 +11,7 @@ exports.addProduct = (req, res) => {
 
     if (req.files.length > 0) {
         productPictures = req.files.map((file) => {
-            return { img: file.filename };
+            return { img: file.path };
         });
     }
 
