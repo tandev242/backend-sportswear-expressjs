@@ -88,6 +88,25 @@ exports.signout = (req, res) => {
     })
 }
 
-exports.signinWithGoogle = (req, res) => {
-    //signinWithGoogle
+exports.signinWithGoogle = async (profile, done) => {
+    const existingUser = await User.findOne({ email: profile.emails[0].value });
+    if (existingUser) {
+        // we already have a record with the given profile ID
+        return done(null, existingUser);
+    }
+    const newUser = {
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        username: "GG" + profile.id,
+        profilePicture: profile.photos[0].value
+    }
+    let user = await new User(newUser).save();
+    done(null, user);
+}
+
+exports.returnTokenForClient = (req, res , next) => {
+    const user = req.user;
+    const token = generateJwtToken(user._id, user.role);
+    req.token = token;
+    next();
 }
