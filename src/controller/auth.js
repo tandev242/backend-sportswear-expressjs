@@ -91,8 +91,6 @@ exports.signout = (req, res) => {
     })
 }
 
-
-
 exports.signinWithGoogle = async (req, res) => {
     const { token } = req.body
     const ticket = await client.verifyIdToken({
@@ -100,21 +98,16 @@ exports.signinWithGoogle = async (req, res) => {
         audience: client_id
     });
     const { name, email, picture } = ticket.getPayload();
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-        const { _id, name, email, role, profilePicture } = existingUser;
-        const token = generateJwtToken(_id, role);
-        const user = { _id, name, email, role, profilePicture };
-        res.status(201).json({ user, token })
-    } else {
-        const newUser = {
-            name,
-            email,
-            username: "GG" + shortid.generate(),
-            profilePicture: picture
-        }
-        let user = await new User(newUser).save();
-        const token = generateJwtToken(user._id, user.role);
-        res.status(201).json({ user, token })
+    const userObj = await User.upsert({
+        where: { email: email },
+        update: { name, profilePicture: picture },
+        create: { name, email, profilePicture: picture, username: "GG" + shortid.generate() }
+    })
+    if (userObj) {
+        const { _id, name, email, profilePicture, role } = userObj;
+        const user = { _id, name, email, profilePicture, role };
+        const jwt = generateJwtToken(user._id, user.role);
+        res.status(201).json({ user, token: jwt })
     }
+    return res.status(400).json({ message: "Something went wrong" })
 }
