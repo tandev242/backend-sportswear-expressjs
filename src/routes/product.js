@@ -7,7 +7,7 @@ router.post('/product/add', requireSignin, adminMiddleware, uploadCloud.array("p
 router.get('/product/:type/:slug', getProductsBySlug);
 router.get('/product/:id', getProductById);
 router.delete('/product/deleteProductById', requireSignin, adminMiddleware, deleteProductById);
-router.post('/product/getProducts', requireSignin, adminMiddleware, getProducts);
+router.post('/product/getProducts', getProducts);
 router.post('/product/update', requireSignin, adminMiddleware, updateProduct);
 router.post('/product/updateQty', requireSignin, adminMiddleware, updateQty);
 router.post('/product/updateSizes', requireSignin, adminMiddleware, updateSizes);
