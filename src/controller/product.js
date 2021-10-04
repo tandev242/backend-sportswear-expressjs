@@ -92,7 +92,7 @@ exports.getProductsBySlug = (req, res) => {
                     .exec((error, products) => {
                         if (error) return res.status(400).json({ error });
                         if (products) {
-                            res.status(200).json({ products: products })
+                            res.status(200).json({ products: products, title: category.name })
                         }
                     })
             }
@@ -114,7 +114,7 @@ exports.getProductsBySlug = (req, res) => {
                     .exec((error, products) => {
                         if (error) return res.status(400).json({ error });
                         if (products) {
-                            res.status(200).json({ products: products })
+                            res.status(200).json({ products: products, title: brand.name })
                         }
                     })
             }
