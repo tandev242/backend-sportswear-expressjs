@@ -85,8 +85,8 @@ exports.getProductsBySlug = (req, res) => {
             if (error) return res.status(400).json({ error });
             if (category) {
                 Product.find({ category: category._id })
-                    .populate({ path: "category", select: "_id name" })
-                    .populate({ path: "brand", select: "_id name" })
+                    .populate({ path: "category", select: "_id name categoryImage" })
+                    .populate({ path: "brand", select: "_id name brandImage" })
                     .populate('sizes')
                     .populate({
                         path: 'sizes', populate: {
@@ -111,8 +111,8 @@ exports.getProductsBySlug = (req, res) => {
             if (error) return res.status(400).json({ error });
             if (brand) {
                 Product.find({ brand: brand._id })
-                    .populate({ path: "category", select: "_id name" })
-                    .populate({ path: "brand", select: "_id name" })
+                    .populate({ path: "category", select: "_id name categoryImage" })
+                    .populate({ path: "brand", select: "_id name brandImage" })
                     .populate('sizes')
                     .populate({
                         path: 'sizes', populate: {
@@ -141,8 +141,8 @@ exports.getProductById = (req, res) => {
     const { _id } = req.body;
     if (_id) {
         Product.findOne({ _id })
-            .populate({ path: "category", select: "_id name" })
-            .populate({ path: "brand", select: "_id name" })
+            .populate({ path: "category", select: "_id name categoryImage" })
+            .populate({ path: "brand", select: "_id name brandImage" })
             .populate('sizes')
             .populate({
                 path: 'sizes', populate: {
@@ -166,8 +166,8 @@ exports.getProductDetailsBySlug = (req, res) => {
     const { slug } = req.params;
     if (slug) {
         Product.findOne({ slug })
-            .populate({ path: "category", select: "_id name" })
-            .populate({ path: "brand", select: "_id name" })
+            .populate({ path: "category", select: "_id name categoryImage" })
+            .populate({ path: "brand", select: "_id name brandImage" })
             .populate('sizes')
             .populate({
                 path: 'sizes', populate: {
@@ -207,8 +207,8 @@ exports.deleteProductById = (req, res) => {
 
 exports.getProducts = async (req, res) => {
     const products = await Product.find({})
-        .populate({ path: "category", select: "_id name" })
-        .populate({ path: "brand", select: "_id name" })
+        .populate({ path: "category", select: "_id name categoryImage" })
+        .populate({ path: "brand", select: "_id name brandImage" })
         .populate('sizes')
         .populate({
             path: 'sizes', populate: {
