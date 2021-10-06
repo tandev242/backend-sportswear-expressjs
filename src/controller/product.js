@@ -110,7 +110,7 @@ exports.getProductsBySlug = (req, res) => {
         Brand.findOne({ slug }).exec((error, brand) => {
             if (error) return res.status(400).json({ error });
             if (brand) {
-                Product.find({ category: category._id })
+                Product.find({ brand: brand._id })
                     .populate({ path: "category", select: "_id name" })
                     .populate({ path: "brand", select: "_id name" })
                     .populate('sizes')
