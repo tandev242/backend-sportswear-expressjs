@@ -9,6 +9,10 @@ exports.addBrand = (req, res) => {
         name,
         slug: `${slugify(name)}-${shortid.generate()}`
     }
+    if (req.file) {
+        brandObj.brandImage = req.file.path;
+    }
+
     const brand = new Brand(brandObj);
     brand.save((error, brand) => {
         if (brand) {
@@ -59,9 +63,9 @@ exports.getBrands = (req, res) => {
             return res.status(400).json({ error })
         }
         if (brands) {
-            return res.status(200).json({ brands });
+            res.status(200).json({ brands });
         } else {
-            return res.status(400).json({ error: "something went wrong" });
+            res.status(400).json({ error: "something went wrong" });
         }
     })
 }

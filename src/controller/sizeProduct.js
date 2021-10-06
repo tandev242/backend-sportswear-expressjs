@@ -10,6 +10,8 @@ exports.addSizeProduct = (req, res) => {
         if (error) return res.status(400).json({ error });
         if (sizeProduct) {
             res.status(201).json({ sizeProduct });
+        }else{
+            res.status(400).json({ error: "something went wrong" });
         }
     })
 }
@@ -21,6 +23,8 @@ exports.updateQtyBySizeProduct = (req, res) => {
             if (err) return res.status(400).json({ error });
             if (result) {
                 res.status(202).json({ result });
+            }else{
+                res.status(400).json({ error: "something went wrong" });
             }
         })
 }

@@ -38,7 +38,7 @@ exports.addToCart = (req, res) => {
                 promiseArray.push(runUpdate(condition, update));
             })
             Promise.all(promiseArray)
-                .then(resq => res.status(201).json({ message: "add to cart successfully"}))
+                .then(resq => res.status(201).json({ message: "add to cart successfully" }))
                 .catch(error => res.status(400).json({ error }))
 
         } else {
@@ -79,6 +79,8 @@ exports.getCartItems = (req, res) => {
                     }
                 })
                 res.status(200).json({ cartItems });
+            } else {
+                res.status(400).json({ error: "something went wrong" })
             }
         })
 }
@@ -98,8 +100,9 @@ exports.removeCartItems = (req, res) => {
             }).exec((error, result) => {
                 if (error) return res.status(400).json({ error });
                 if (result) {
-                    res.status(202).json({ result });
+                    return res.status(202).json({ result });
                 }
+                return res.status(400).json({ error: "something went wrong" });
             })
     }
 }

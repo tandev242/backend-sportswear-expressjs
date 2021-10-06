@@ -14,6 +14,8 @@ exports.addDeliveryInfo = (req, res) => {
                     if (error) return res.status(400).json({ error });
                     if (address) {
                         res.status(201).json({ address });
+                    }else{
+                        res.status(400).json({ error: "something went wrong" })
                     }
                 })
         } else {
@@ -29,6 +31,8 @@ exports.addDeliveryInfo = (req, res) => {
                 if (error) return res.status(400).json({ error });
                 if (address) {
                     res.status(201).json({ address });
+                }else{
+                    res.status(400).json({ error: "something went wrong" })
                 }
             });
         }
@@ -43,6 +47,8 @@ exports.getDeliveryInfo = (req , res) =>{
         if(error) return res.status(400).json({ error});
         if(deliveryInfo){
             res.status(200).json({ deliveryInfo});
+        }else{
+            res.status(400).json({ error: "something went wrong" });
         }
     })
 }

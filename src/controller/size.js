@@ -10,6 +10,8 @@ exports.addSize = (req, res) => {
         if (error) return res.status(400).json({ error });
         if (size) {
             res.status(201).json({ size: size });
+        }else{
+            res.status(400).json({ error: "something went wrong" });
         }
     })
 }
@@ -19,6 +21,8 @@ exports.getAllSizes = (req, res) => {
         if (error) return res.status(400).json({ error });
         if (sizes) {
             res.status(200).json({ sizes });
+        }else{
+            res.status(400).json({ error: "something went wrong" });
         }
     })
 }

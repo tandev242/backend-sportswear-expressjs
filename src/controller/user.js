@@ -20,6 +20,8 @@ exports.updateUser = (req, res) => {
         if (error) return res.status(400).json({ error });
         if (result) {
             res.status(202).json({ message: "updated successfully" });
+        }else{
+            res.status(400).json({ error: "something went wrong" });
         }
     });
 }
@@ -30,6 +32,8 @@ exports.deleteUserById = (req, res) => {
         if (error) return res.status(400).json({ error });
         if (result) {
             res.status(204).json({ message: "deleted successfully" });
+        }else{
+            res.status(400).json({ error: "something went wrong" });
         }
     });
 }

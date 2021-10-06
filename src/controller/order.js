@@ -91,25 +91,27 @@ exports.updateOrderStatus = (req, res) => {
                 "orderStatus.$": [
                     { type, date: new Date(), isCompleted: true },
                 ],
-                
+
             },
         }
     ).exec((error, order) => {
         if (error) return res.status(400).json({ error });
         if (order) {
             res.status(202).json({ order });
+        }else{
+            res.status(400).json({ error: "something went wrong" });
         }
     });
 }
 
 exports.getCustomerOrders = async (req, res) => {
     const orders = await Order.find({})
-      .populate("items.productId", "name")
-      .exec();
+        .populate("items.productId", "name")
+        .exec();
     res.status(200).json({ orders });
-  };
+};
 
-  
+
 exports.getOrders = (req, res) => {
     Order.find({ user: req.user._id })
         .select("_id totalAmount paymentStatus paymentType orderStatus items")
@@ -119,6 +121,8 @@ exports.getOrders = (req, res) => {
             if (error) return res.status(400).json({ error });
             if (orders) {
                 res.status(200).json({ orders });
+            } else {
+                res.status(400).json({ error: "something went wrong" });
             }
         })
 }

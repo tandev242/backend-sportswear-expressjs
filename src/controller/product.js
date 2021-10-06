@@ -29,6 +29,8 @@ exports.addProduct = (req, res) => {
         if (error) return res.status(400).json({ error });
         if (product) {
             res.status(201).json({ product, files: req.files });
+        } else {
+            res.status(400).json({ error: "something went wrong" });
         }
     });
 }
@@ -55,6 +57,8 @@ exports.updateQty = (req, res) => {
                     if (error) return res.status(400).json({ error });
                     if (product) {
                         res.status(202).json({ product });
+                    } else {
+                        res.status(400).json({ error: "something went wrong" });
                     }
                 })
             }
@@ -93,8 +97,12 @@ exports.getProductsBySlug = (req, res) => {
                         if (error) return res.status(400).json({ error });
                         if (products) {
                             res.status(200).json({ products: products, title: category.name })
+                        } else {
+                            res.status(400).json({ error: "something went wrong" });
                         }
                     })
+            } else {
+                res.status(400).json({ error: "something went wrong" });
             }
         })
     }
@@ -115,8 +123,12 @@ exports.getProductsBySlug = (req, res) => {
                         if (error) return res.status(400).json({ error });
                         if (products) {
                             res.status(200).json({ products: products, title: brand.name })
+                        } else {
+                            res.status(400).json({ error: "something went wrong" });
                         }
                     })
+            } else {
+                res.status(400).json({ error: "something went wrong" });
             }
         })
     }
@@ -126,9 +138,9 @@ exports.getProductsBySlug = (req, res) => {
 }
 
 exports.getProductById = (req, res) => {
-    const { id } = req.params;
-    if (id) {
-        Product.findOne({ _id: id })
+    const { _id } = req.body;
+    if (_id) {
+        Product.findOne({ _id })
             .populate({ path: "category", select: "_id name" })
             .populate({ path: "brand", select: "_id name" })
             .populate('sizes')
@@ -141,12 +153,40 @@ exports.getProductById = (req, res) => {
                 if (error) return res.status(400).json({ error });
                 if (product) {
                     res.status(200).json({ product });
+                } else {
+                    res.status(400).json({ error: "something went wrong" });
                 }
             })
     } else {
         res.status(400).json({ error: "Params required" });
     }
 }
+
+exports.getProductDetailsBySlug = (req, res) => {
+    const { slug } = req.params;
+    if (slug) {
+        Product.findOne({ slug })
+            .populate({ path: "category", select: "_id name" })
+            .populate({ path: "brand", select: "_id name" })
+            .populate('sizes')
+            .populate({
+                path: 'sizes', populate: {
+                    path: "size", select: "_id size description"
+                }
+            })
+            .exec((error, product) => {
+                if (error) return res.status(400).json({ error });
+                if (product) {
+                    res.status(200).json({ product });
+                } else {
+                    res.status(400).json({ error: "something went wrong" });
+                }
+            })
+    } else {
+        res.status(400).json({ error: "Params required" });
+    }
+}
+
 
 exports.deleteProductById = (req, res) => {
     const { productId } = req.body.payload;
@@ -156,6 +196,8 @@ exports.deleteProductById = (req, res) => {
                 if (error) return res.status(400).json({ error });
                 if (result) {
                     res.status(202).json({ result });
+                } else {
+                    res.status(400).json({ error: "something went wrong" });
                 }
             })
     } else {
