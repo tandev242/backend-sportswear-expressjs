@@ -6,7 +6,7 @@ const slugify = require("slugify");
 
 
 exports.addProduct = (req, res) => {
-    const { name, price, description, category, brand } = req.body;
+    const { name, price, description, category, brand, discountPercent } = req.body;
     const sizes = JSON.parse(req.body.sizes);
     let productPictures = [];
 
@@ -23,6 +23,7 @@ exports.addProduct = (req, res) => {
         description,
         productPictures,
         sizes,
+        discountPercent,
         category,
         brand
     });
@@ -37,13 +38,38 @@ exports.addProduct = (req, res) => {
 }
 
 exports.updateProduct = (req, res) => {
-    Product.findByIdAndUpdate(
-        { _id: req.body._id }),
-        { $set: req.body },
-        (error, result) => {
-            if (err) return res.status(400).json({ error });
+    // Product.findByIdAndUpdate(
+    //     { _id: req.body._id }),
+    //     { $set: req.body },
+    //     (error, result) => {
+    //         if (error) return res.status(400).json({ error });
+    //         res.status(202).json({ result });
+    //     }
+}
+
+exports.updateDiscountPercent = (req, res) => {
+    const { type, _id, discountPercent } = req.body;
+    if (type === "category") {
+        Product.updateMany({ category: _id }, { $set: { discountPercent } }
+        ).exec((error, result) => {
+            if (error) return res.status(400).json({ error });
             res.status(202).json({ result });
-        }
+        })
+    } else if (type === "brand") {
+        Product.updateMany({ category: _id }, { $set: { discountPercent } }
+        ).exec((error, result) => {
+            if (error) return res.status(400).json({ error });
+            res.status(202).json({ result });
+        })
+    } else if (!type) {
+        Product.updateOne({ _id }, { $set: { discountPercent } }
+        ).exec((error, result) => {
+            if (error) return res.status(400).json({ error });
+            res.status(202).json({ result });
+        })
+    } else {
+        res.status(400).json({ error: "params is invalid" });
+    }
 }
 
 exports.updateQty = (req, res) => {
