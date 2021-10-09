@@ -56,7 +56,7 @@ exports.updateDiscountPercent = (req, res) => {
             res.status(202).json({ result });
         })
     } else if (type === "brand") {
-        Product.updateMany({ category: _id }, { $set: { discountPercent } }
+        Product.updateMany({ brand: _id }, { $set: { discountPercent } }
         ).exec((error, result) => {
             if (error) return res.status(400).json({ error });
             res.status(202).json({ result });
@@ -107,7 +107,26 @@ exports.updateSizes = (req, res) => {
 
 exports.getProductsBySlug = (req, res) => {
     const { slug, type } = req.params;
-    if (type === "category") {
+    if ((type === "category" || type === "brand") && slug === "all") {
+        Product.find({})
+            .populate({ path: "category", select: "_id name categoryImage" })
+            .populate({ path: "brand", select: "_id name brandImage" })
+            .populate('sizes')
+            .populate({
+                path: 'sizes', populate: {
+                    path: "size", select: "_id size description"
+                }
+            })
+            .exec((error, products) => {
+                if (error) return res.status(400).json({ error });
+                if (products) {
+                    res.status(200).json({ products: products, title: "Tất cả sản phẩm" })
+                } else {
+                    res.status(400).json({ error: "something went wrong" });
+                }
+            })
+    }
+    else if (type === "category") {
         Category.findOne({ slug }).exec((error, category) => {
             if (error) return res.status(400).json({ error });
             if (category) {
