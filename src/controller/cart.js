@@ -38,7 +38,7 @@ exports.addToCart = (req, res) => {
                 promiseArray.push(runUpdate(condition, update));
             })
             Promise.all(promiseArray)
-                .then(resq => res.status(201).json({ message: "add to cart successfully" }))
+                .then(result => res.status(201).json({ message: "add to cart successfully" }))
                 .catch(error => res.status(400).json({ error }))
 
         } else {
@@ -49,7 +49,7 @@ exports.addToCart = (req, res) => {
             cart.save((error, cart) => {
                 if (error) return res.status(400).json({ error });
                 if (cart) {
-                    res.status(201).json({ cart });
+                    res.status(201).json({ message: "add to cart successfully" });
                 }
             })
         }
@@ -64,19 +64,17 @@ exports.getCartItems = (req, res) => {
         .exec((error, cart) => {
             if (error) return res.status(400).json({ error })
             if (cart) {
-                let cartItems = {};
+                let cartItems = [];
                 cart.cartItems.forEach((item) => {
-                    cartItems[item.product._id.toString()] = {
-                        _id: item.product._id.toString(),
+                    cartItems.push({
+                        productId: item.product._id.toString(),
                         name: item.product.name,
                         price: item.product.price,
                         img: item.product.productPictures[0].img,
                         quantity: item.quantity,
-                    }
-                    cartItems[item.size._id.toString()] = {
-                        _id: item.size._id.toString(),
+                        sizeId: item.size._id.toString(),
                         size: item.size.size,
-                    }
+                    })
                 })
                 res.status(200).json({ cartItems });
             } else {
