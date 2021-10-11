@@ -130,22 +130,33 @@ exports.getProductsBySlug = (req, res) => {
         Category.findOne({ slug }).exec((error, category) => {
             if (error) return res.status(400).json({ error });
             if (category) {
-                Product.find({ category: category._id })
-                    .populate({ path: "category", select: "_id name categoryImage" })
-                    .populate({ path: "brand", select: "_id name brandImage" })
-                    .populate('sizes')
-                    .populate({
-                        path: 'sizes', populate: {
-                            path: "size", select: "_id size description"
+                // Product.find({ $or: [{ parentId: category._id }, { category: category._id }] })
+                const categoriesArr = [category];
+                Category.find({ parentId: category._id })
+                    .exec((error, categories) => {
+                        if (error) {
+                            return res.status(400).json({ error: "something went wrong" });
                         }
-                    })
-                    .exec((error, products) => {
-                        if (error) return res.status(400).json({ error });
-                        if (products) {
-                            res.status(200).json({ products: products, title: category.name })
-                        } else {
-                            res.status(400).json({ error: "something went wrong" });
+                        if (categories) {
+                            categoriesArr.push(...categories);
                         }
+                        Product.find({ category: { $in: categoriesArr } })
+                            .populate({ path: "category", select: "_id name categoryImage" })
+                            .populate({ path: "brand", select: "_id name brandImage" })
+                            .populate('sizes')
+                            .populate({
+                                path: 'sizes', populate: {
+                                    path: "size", select: "_id size description"
+                                }
+                            })
+                            .exec((error, products) => {
+                                if (error) return res.status(400).json({ error });
+                                if (products) {
+                                    res.status(200).json({ products: products, title: category.name })
+                                } else {
+                                    res.status(400).json({ error: "something went wrong" });
+                                }
+                            })
                     })
             } else {
                 res.status(400).json({ error: "something went wrong" });
