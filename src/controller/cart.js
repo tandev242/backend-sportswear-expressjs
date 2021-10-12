@@ -67,13 +67,9 @@ exports.getCartItems = (req, res) => {
                 let cartItems = [];
                 cart.cartItems.forEach((item) => {
                     cartItems.push({
-                        productId: item.product._id.toString(),
-                        name: item.product.name,
-                        price: item.product.price,
-                        img: item.product.productPictures[0].img,
-                        quantity: item.quantity,
-                        sizeId: item.size._id.toString(),
-                        size: item.size.size,
+                        product: item.product,
+                        size: item.size,
+                        quantity: item.quantity
                     })
                 })
                 res.status(200).json({ cartItems });
@@ -88,7 +84,7 @@ exports.removeCartItems = (req, res) => {
     const { productId } = req.body.payload;
     console.log(productId)
     if (productId) {
-        Cart.updateMany({ user: req.user._id },
+        Cart.updateOne({ user: req.user._id },
             {
                 $pull: {
                     cartItems: {
