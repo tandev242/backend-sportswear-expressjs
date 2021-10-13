@@ -275,3 +275,19 @@ exports.getProducts = async (req, res) => {
         .exec();
     res.status(200).json({ products });
 }
+
+
+exports.searchByProductName = async (req, res) => {
+    const { text } = req.body;
+    const products = await Product.find({ $text: { $search: text } })
+        .populate({ path: "category", select: "_id name categoryImage" })
+        .populate({ path: "brand", select: "_id name brandImage" })
+        .populate('sizes')
+        .populate({
+            path: 'sizes', populate: {
+                path: "size", select: "_id size description"
+            }
+        })
+        .exec();
+    res.status(200).json({ products, title: `Kết quả tìm kiếm: ${text}` });
+}
