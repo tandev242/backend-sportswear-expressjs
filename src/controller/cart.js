@@ -57,7 +57,7 @@ exports.addToCart = (req, res) => {
             }
         })
     } else {
-        return res.status(400).json({ error: "CartItems not found" });
+        return res.status(400).json({ error: "CartItems is not allowed to be null" });
     }
 }
 
@@ -78,7 +78,7 @@ exports.getCartItems = (req, res) => {
                 })
                 res.status(200).json({ cartItems });
             } else {
-                res.status(400).json({ error: "something is not allowed to be null" })
+                res.status(400).json({ error: "something went wrong" })
             }
         })
 }
