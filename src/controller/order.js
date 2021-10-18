@@ -1,7 +1,8 @@
 const Order = require('../models/order');
 const Cart = require('../models/cart');
 const DeliveryInfo = require("../models/deliveryInfo");
-
+const https = require('https');
+const crypto = require('crypto');
 
 exports.addOrder = (req, res) => {
     const { items, addressId, totalAmount, paymentStatus, paymentType } = req.body;
@@ -98,7 +99,7 @@ exports.updateOrderStatus = (req, res) => {
         if (error) return res.status(400).json({ error });
         if (order) {
             res.status(202).json({ order });
-        }else{
+        } else {
             res.status(400).json({ error: "something went wrong" });
         }
     });
@@ -125,4 +126,60 @@ exports.getOrders = (req, res) => {
                 res.status(400).json({ error: "something went wrong" });
             }
         })
+}
+
+exports.paymentWithMomo = async (req, res) => {
+    // const { amount, orderInfo}
+
+    const partnerCode = "MOMO6K0Y20210317";
+    const accessKey = "8oZLaYOOTAswDt0O";
+    const secretkey = "MHxk2u6eOXitCarGbCsGXmpydjn0wCAk";
+    const requestId = partnerCode + new Date().getTime();
+    const orderId = requestId;
+    const orderInfo = "Thanh toán giày tại DoubleT";
+    const redirectUrl = "https://momo.vn/return";
+    const ipnUrl = "https://localhost:5000/haha";
+    const amount = "50000";
+    const requestType = "captureWallet"
+    const extraData = ""; //pass empty value if your merchant does not have stores
+    const rawSignature = "accessKey=" + accessKey + "&amount=" + amount + "&extraData=" + extraData + "&ipnUrl=" + ipnUrl + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&partnerCode=" + partnerCode + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId + "&requestType=" + requestType
+    const signature = crypto.createHmac('sha256', secretkey)
+        .update(rawSignature)
+        .digest('hex');
+    //json object send to MoMo endpoint
+    const body = JSON.stringify({
+        partnerCode: partnerCode,
+        accessKey: accessKey,
+        requestId: requestId,
+        amount: amount,
+        orderId: orderId,
+        orderInfo: orderInfo,
+        redirectUrl: redirectUrl,
+        ipnUrl: ipnUrl,
+        extraData: extraData,
+        requestType: requestType,
+        signature: signature,
+        lang: 'en'
+    });
+    const options = {
+        hostname: 'test-payment.momo.vn',
+        port: 443,
+        path: '/v2/gateway/api/create',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body)
+        }
+    }
+    var request = await https.request(options, (resp) => {
+        resp.setEncoding('utf8');
+        resp.on('data', (body) => {
+            res.redirect(JSON.parse(body).payUrl);
+        });
+        resp.on('end', () => {
+            console.log('No more data in response.');
+        });
+    });
+    request.write(body);
+    request.end();
 }

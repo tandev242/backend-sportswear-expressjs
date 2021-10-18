@@ -4,6 +4,7 @@
   "description": "e-commerce web app vip pro",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon ./src/index.server.js",
     "start": "node ./src/index.server.js"
   },
   "keywords": [
