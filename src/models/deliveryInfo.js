@@ -20,6 +20,10 @@ const addressSchema = new mongoose.Schema({
     trim: true,
     min: 10,
     max: 100,
+  },
+  isDefault: {
+    type: Boolean,
+    default: false
   }
 });
 
