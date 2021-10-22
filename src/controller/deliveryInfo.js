@@ -2,7 +2,7 @@ const DeliveryInfo = require("../models/deliveryInfo");
 
 exports.addDeliveryInfo = (req, res) => {
 
-    const { address } = req.body.payload;
+    const { address } = req.body;
     if (address) {
         if (address._id) {
             DeliveryInfo.findOneAndUpdate({ user: req.user._id, "address._id": address._id },
