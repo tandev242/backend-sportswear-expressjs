@@ -68,25 +68,21 @@ exports.deleteDeliveryInfo = (req, res) => {
 exports.setDefaultDeliveryInfo = (req, res) => {
     const { addressId } = req.body.payload;
     if (addressId) {
-        DeliveryInfo.updateOne({ user: req.user._id, "address._id": { $ne: addressId } },
+        DeliveryInfo.updateOne({ user: req.user._id },
             {
                 $set: {
-                    "address.$.isDefault": false
+                    "address.$[].isDefault": false
                 }
             }).exec((done, error) => {
-                if (error) {
-                    return res.status(400).json({ error })
-                }
-                return es.status(201).json({ done });
                 DeliveryInfo.findOneAndUpdate({ user: req.user._id, "address._id": addressId },
                     {
                         $set: {
                             "address.$.isDefault": true
                         }
-                    }).exec((error, address) => {
+                    }).exec((error, result) => {
                         if (error) return res.status(400).json({ error });
-                        if (address) {
-                            res.status(201).json({ address });
+                        if (result) {
+                            res.status(201).json({ result: "Set Default successful" });
                         } else {
                             res.status(400).json({ error: "something went wrong" })
                         }
