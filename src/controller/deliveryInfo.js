@@ -100,7 +100,7 @@ exports.getDeliveryInfo = (req, res) => {
             if (deliveryInfo) {
                 res.status(200).json({ deliveryInfo });
             } else {
-                res.status(400).json({ error: "something went wrong" });
+                res.status(200).json({ deliveryInfo: {} });
             }
         })
 }
