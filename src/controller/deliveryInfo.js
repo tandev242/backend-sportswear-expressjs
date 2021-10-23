@@ -95,6 +95,7 @@ exports.setDefaultDeliveryInfo = (req, res) => {
 
 exports.getDeliveryInfo = (req, res) => {
     DeliveryInfo.findOne({ user: req.user._id })
+        .populate("user", "_id name profilePicture")
         .exec((error, deliveryInfo) => {
             if (error) return res.status(400).json({ error });
             if (deliveryInfo) {
