@@ -9,6 +9,6 @@ router.post('/order/getOrder', requireSignin, userMiddleware, getOrder);
 router.post('/order/getOrders', requireSignin, userMiddleware, getOrders);
 router.post('/order/updateType', requireSignin, adminMiddleware, updateOrderStatus);
 router.post('/order/getCustomerOrders', requireSignin, adminMiddleware, getCustomerOrders);
-router.get('/order/paymentWithMomo', requireSignin, userMiddleware, paymentWithMomo);
+router.post('/order/paymentWithMomo', requireSignin, userMiddleware, paymentWithMomo);
 
 module.exports = router;

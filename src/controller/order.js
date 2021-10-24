@@ -129,8 +129,7 @@ exports.getOrders = (req, res) => {
 }
 
 exports.paymentWithMomo = async (req, res) => {
-    // const { amount, orderInfo}
-
+    console.log(req.body)
     const partnerCode = "MOMO6K0Y20210317";
     const accessKey = "8oZLaYOOTAswDt0O";
     const secretkey = "MHxk2u6eOXitCarGbCsGXmpydjn0wCAk";
@@ -139,7 +138,7 @@ exports.paymentWithMomo = async (req, res) => {
     const orderInfo = "Thanh toán giày tại DoubleT";
     const redirectUrl = "https://momo.vn/return";
     const ipnUrl = "https://localhost:5000/haha";
-    const amount = "50000";
+    const amount = req.body.amount;
     const requestType = "captureWallet"
     const extraData = ""; //pass empty value if your merchant does not have stores
     const rawSignature = "accessKey=" + accessKey + "&amount=" + amount + "&extraData=" + extraData + "&ipnUrl=" + ipnUrl + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&partnerCode=" + partnerCode + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId + "&requestType=" + requestType
@@ -174,7 +173,7 @@ exports.paymentWithMomo = async (req, res) => {
     var request = await https.request(options, (resp) => {
         resp.setEncoding('utf8');
         resp.on('data', (body) => {
-            res.redirect(JSON.parse(body).payUrl);
+            res.status(200).json({ url: JSON.parse(body).payUrl });
         });
         resp.on('end', () => {
             console.log('No more data in response.');
