@@ -129,15 +129,14 @@ exports.getOrders = (req, res) => {
 }
 
 exports.paymentWithMomo = async (req, res) => {
-    console.log(req.body)
     const partnerCode = "MOMO6K0Y20210317";
     const accessKey = "8oZLaYOOTAswDt0O";
     const secretkey = "MHxk2u6eOXitCarGbCsGXmpydjn0wCAk";
     const requestId = partnerCode + new Date().getTime();
     const orderId = requestId;
     const orderInfo = "Thanh toán giày tại DoubleT";
-    const redirectUrl = "https://momo.vn/return";
-    const ipnUrl = "https://localhost:5000/haha";
+    const redirectUrl = "https://localhost:3000/cart";
+    const ipnUrl = "https://localhost:3000/cart";
     const amount = req.body.amount;
     const requestType = "captureWallet"
     const extraData = ""; //pass empty value if your merchant does not have stores
