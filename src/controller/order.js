@@ -167,6 +167,7 @@ exports.updateOrderStatus = (req, res) => {
 exports.getCustomerOrders = async (req, res) => {
     const orders = await Order.find({})
         .populate("items.productId", "_id name slug price discountPercent productPictures")
+        .sort({ createdAt: -1 })
         .exec();
     res.status(200).json({ orders });
 };
@@ -174,9 +175,9 @@ exports.getCustomerOrders = async (req, res) => {
 
 exports.getOrders = (req, res) => {
     Order.find({ user: req.user._id })
-        .select("_id totalAmount paymentStatus paymentType orderStatus items")
         .populate("items.productId", "_id name slug price discountPercent productPictures")
         .populate("items.sizeId", "_id size description")
+        .sort({ createdAt: -1 })
         .exec((error, orders) => {
             if (error) return res.status(400).json({ error });
             if (orders) {
@@ -186,6 +187,8 @@ exports.getOrders = (req, res) => {
             }
         })
 }
+
+
 
 exports.paymentWithMomo = async (req, res) => {
     const { order } = req.body;
