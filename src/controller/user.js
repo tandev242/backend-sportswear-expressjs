@@ -1,6 +1,4 @@
 const User = require("../models/user");
-const Otp = require("../models/otp");
-const nodemailer = require("nodemailer");
 
 exports.getUsers = (req, res) => {
   User.find({}).exec((error, users) => {
@@ -43,36 +41,5 @@ exports.deleteUserById = (req, res) => {
 
 
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "laptrinhwebcungtandz@gmail.com", //email ID
-    pass: "tan240600", //Password
-  },
-});
-exports.sendOtpToEmail = (req, res) => {
-  const { email, _id } = req.user;
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const details = {
-    from: "DoubleT Sport", // sender address same as above
-    to: email, // Receiver's email id
-    subject: "DoubleT Sport - Mã OTP của bạn là: ", // Subject of the mail.
-    html: otp, // Sending OTP
-  };
-  transporter.sendMail(details, function (error, data) {
-    if (error) res.status(400).json({ error });
-    if (data) {
-      const otpObj = new Otp({ user: _id, generatedOtp: otp });
-      otpObj.save((error, otp) => {
-        if (error) return res.status(400).json({ error });
-        if (otp) {
-          res.status(201).json({ message: "generate Otp successfully" });
-        } else {
-          res.status(400).json({ error: "something went wrong" });
-        }
-      });
-    } else {
-      res.status(400).json({ error: "something went wrong" });
-    }
-  });
-};
+
+
