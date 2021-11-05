@@ -41,6 +41,8 @@ exports.deleteUserById = (req, res) => {
   });
 };
 
+
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -49,21 +51,18 @@ const transporter = nodemailer.createTransport({
   },
 });
 exports.sendOtpToEmail = (req, res) => {
-  const { email } = req.user;
-  const user = req.user;
-  console.log(email, user)
-  const otp = Math.floor(100000 + Math.random() * 900000);
+  const { email, _id } = req.user;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const details = {
-    from: "laptrinhwebcungtandz@gmail.com", // sender address same as above
+    from: "DoubleT Sport", // sender address same as above
     to: email, // Receiver's email id
-    subject: "Mã OTP của bạn là", // Subject of the mail.
+    subject: "DoubleT Sport - Mã OTP của bạn là: ", // Subject of the mail.
     html: otp, // Sending OTP
   };
-
   transporter.sendMail(details, function (error, data) {
     if (error) res.status(400).json({ error });
     if (data) {
-      const otpObj = new Otp({ user, generatedOtp: otp });
+      const otpObj = new Otp({ user: _id, generatedOtp: otp });
       otpObj.save((error, otp) => {
         if (error) return res.status(400).json({ error });
         if (otp) {
