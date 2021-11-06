@@ -33,14 +33,19 @@ exports.updateUserInfo = async (req, res) => {
   const { otp, name, password } = req.body;
   const dateNow = new Date(Date.now())
   const currentDateSubtractTenMinutes = new Date(dateNow.getTime() - 600000)
-  const otpObj = await Otp.findOneAndDelete({
-    user: req.user._id, generatedOtp: otp,
-    createdAt: { $gte: currentDateSubtractTenMinutes, $lt: dateNow }
-  }).exec()
+
   const payload = { name };
-  if (otpObj && password) {
-    const hashPassword = await bcrypt.hash(password, 10);
-    payload.password = hashPassword;
+  if (password) {
+    const otpObj = await Otp.findOneAndDelete({
+      user: req.user._id, generatedOtp: otp,
+      createdAt: { $gte: currentDateSubtractTenMinutes, $lt: dateNow }
+    }).exec()
+    if (otpObj) {
+      const hashPassword = await bcrypt.hash(password, 10);
+      payload.password = hashPassword;
+    } else {
+      return res.status(400).json({ error: "OTP is wrong" });
+    }
   }
   if (req.file) {
     payload.profilePicture = req.file.path;
