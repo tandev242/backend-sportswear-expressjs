@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const Otp = require("../models/otp");
+const bcrypt = require("bcrypt");
 
 exports.getUsers = (req, res) => {
   User.find({}).exec((error, users) => {
@@ -25,6 +27,34 @@ exports.updateUser = (req, res) => {
       }
     }
   );
+};
+
+exports.updateUserInfo = async (req, res) => {
+  const { otp, name, password } = req.body;
+  const dateNow = new Date(Date.now())
+  const currentDateSubtractTenMinutes = new Date(dateNow.getTime() - 600000)
+  const otpObj = await Otp.findOneAndDelete({
+    user: req.user._id, generatedOtp: otp,
+    createdAt: { $gte: currentDateSubtractTenMinutes, $lt: dateNow }
+  }).exec()
+  if (otpObj) {
+    const payload = { name };
+    if (password) {
+      const hashPassword = await bcrypt.hash(password, 10);
+      payload.password = hashPassword;
+    }
+    if (req.file) {
+      payload.profilePicture = req.file.path;
+    }
+    const userObj = await User.findOneAndUpdate({ _id: req.user._id }, { ...payload }, {upsert: true}).exec();
+    if (userObj) {
+      res.status(202).json({ message: "updated successfully" });
+    } else {
+      res.status(400).json({ error: "Something went wrong" });
+    }
+  } else {
+    res.status(400).json({ error: "OTP invalid" });
+  }
 };
 
 exports.deleteUserById = (req, res) => {
