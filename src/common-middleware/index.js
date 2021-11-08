@@ -70,8 +70,8 @@ exports.sendOtpToEmail = (req, res) => {
     const details = {
         from: "DoubleT Sport", // sender address same as above
         to: email, // Receiver's email id
-        subject: "DoubleT Sport - Mã OTP của bạn là: ", // Subject of the mail.
-        html: otp, // Sending OTP
+        subject: "Mã OTP sẽ hết hạn sau 10 phút, OTP của bạn là: ", // Subject of the mail.
+        html: `<h1> ${otp} </h1>`, // Sending OTP
     };
     transporter.sendMail(details, function (error, data) {
         if (error) res.status(400).json({ error });
