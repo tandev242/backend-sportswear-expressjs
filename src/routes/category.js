@@ -1,5 +1,5 @@
 const express = require('express');
-const { addCategory, getCategories, deleteCategories, updateCategories } = require('../controller/category');
+const { addCategory, getCategories, deleteCategories, updateCategories } = require('../controllers/category');
 const { requireSignin, adminMiddleware, uploadCloud } = require('../common-middleware');
 const router = express.Router();
 

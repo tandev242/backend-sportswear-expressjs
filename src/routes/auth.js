@@ -1,5 +1,5 @@
 const express = require('express');
-const { signup, signin, signinWithGoogle, signout } = require('../controller/auth');
+const { signup, signin, signinWithGoogle, signout } = require('../controllers/auth');
 const { validateSignupRequest, validateSigninRequest, isRequestValidated } = require('../validators/auth');
 const { requireSignin, userMiddleware, sendOtpToEmail } = require('../common-middleware');
 

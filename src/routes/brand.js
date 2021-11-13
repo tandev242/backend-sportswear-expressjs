@@ -1,5 +1,5 @@
 const express = require('express');
-const { addBrand, getBrands, deleteBrands, updateBrands } = require('../controller/brand');
+const { addBrand, getBrands, deleteBrands, updateBrands } = require('../controllers/brand');
 const { requireSignin, adminMiddleware, uploadCloud } = require('../common-middleware');
 
 

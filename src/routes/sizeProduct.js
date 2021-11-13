@@ -1,6 +1,6 @@
 const express = require('express');
 const { requireSignin , adminMiddleware } = require('../common-middleware');
-const { addSizeProduct, updateQtyBySizeProduct } = require('../controller/sizeProduct');
+const { addSizeProduct, updateQtyBySizeProduct } = require('../controllers/sizeProduct');
 
 
 const router = express.Router();

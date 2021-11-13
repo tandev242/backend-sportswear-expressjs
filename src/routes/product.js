@@ -4,7 +4,7 @@ const { addProduct, getProductsBySlug,
     deleteProductById, getProducts,
     updateProduct, updateQty, updateSizes,
     searchByProductName,
-    updateDiscountPercent } = require('../controller/product');
+    updateDiscountPercent } = require('../controllers/product');
 const { requireSignin, adminMiddleware, uploadCloud } = require('../common-middleware');
 const router = express.Router();
 

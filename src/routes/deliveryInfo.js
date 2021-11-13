@@ -1,6 +1,6 @@
 const express = require('express');
 const { requireSignin, userMiddleware } = require('../common-middleware');
-const { addDeliveryInfo, getDeliveryInfo, deleteDeliveryInfo, setDefaultDeliveryInfo } = require('../controller/deliveryInfo');
+const { addDeliveryInfo, getDeliveryInfo, deleteDeliveryInfo, setDefaultDeliveryInfo } = require('../controllers/deliveryInfo');
 
 
 const router = express.Router();

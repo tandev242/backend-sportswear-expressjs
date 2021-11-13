@@ -1,6 +1,6 @@
 const express = require('express');
 const { requireSignin, userMiddleware, adminMiddleware } = require('../common-middleware');
-const { addOrder, getOrder, getOrders, updateOrderStatus, getCustomerOrders, paymentWithMomo } = require('../controller/order');
+const { addOrder, getOrder, getOrders, updateOrderStatus, getCustomerOrders, paymentWithMomo } = require('../controllers/order');
 
 const router = express.Router();
 
