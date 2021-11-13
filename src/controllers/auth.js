@@ -108,3 +108,15 @@ exports.signinWithGoogle = async (req, res) => {
     res.status(201).json({ user, token });
   }
 };
+
+exports.isUserLoggedIn = async (req, res) => {
+  try {
+    const userObj = await User.findOne({ _id: req.user._id });
+    const { _id, name, email, role, profilePicture } = user;
+    const user = { _id, name, email, role, profilePicture };
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};
+
