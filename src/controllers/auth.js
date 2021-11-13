@@ -1,7 +1,9 @@
 const User = require("../models/user");
+const Otp = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const shortid = require("shortid");
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 const { OAuth2Client } = require("google-auth-library");
 const client_id = process.env.GOOGLE_CLIENT_ID;
@@ -120,3 +122,71 @@ exports.isUserLoggedIn = async (req, res) => {
   }
 };
 
+exports.updateForgetPassword = async (req, res) => {
+  const { otp, password, email } = req.body;
+  const dateNow = new Date(Date.now())
+  const currentDateSubtractTenMinutes = new Date(dateNow.getTime() - 600000)
+  const user = await User.findOne({ email }).exec();
+  if (password) {
+    const otpObj = await Otp.findOneAndDelete({
+      user: user._id, generatedOtp: otp,
+      createdAt: { $gte: currentDateSubtractTenMinutes, $lt: dateNow }
+    }).exec()
+    if (otpObj) {
+      const hashPassword = await bcrypt.hash(password, 10);
+      const userObj = await User.findOneAndUpdate({ email }, { password: hashPassword }, { upsert: true }).exec();
+      if (userObj) {
+        res.status(202).json({ message: "updated successfully" });
+      } else {
+        res.status(400).json({ error: "Something went wrong" });
+      }
+    } else {
+      return res.status(400).json({ error: "OTP is wrong" });
+    }
+  } else {
+    return res.status(400).json({ error: "Password is not valid" });
+  }
+};
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "laptrinhwebcungtandz@gmail.com", //email ID
+    pass: "tan240600", //Password
+  },
+});
+exports.sendOtpToEmail = (req, res) => {
+  const { email } = req.body;
+  User.findOne({ email }).exec((error, user) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    if (user) {
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const details = {
+        from: "DoubleT Sport", // sender address same as above
+        to: email, // Receiver's email id
+        subject: "Mã OTP sẽ hết hạn sau 10 phút, OTP của bạn là: ", // Subject of the mail.
+        html: `<h1> ${otp} </h1>`, // Sending OTP
+      };
+      transporter.sendMail(details, function (error, data) {
+        if (error) res.status(400).json({ error });
+        if (data) {
+          const otpObj = new Otp({ user: user._id, generatedOtp: otp });
+          otpObj.save((error, otp) => {
+            if (error) return res.status(400).json({ error });
+            if (otp) {
+              res.status(201).json({ message: "generate Otp successfully" });
+            } else {
+              res.status(400).json({ error: "something went wrong" });
+            }
+          });
+        } else {
+          res.status(400).json({ error: "something went wrong" });
+        }
+      });
+    } else {
+      res.status(400).json({ error: "user is not exist" });
+    }
+  })
+};
