@@ -1,9 +1,22 @@
 const Order = require('../models/order');
 const Cart = require('../models/cart');
 const DeliveryInfo = require("../models/deliveryInfo");
+const Product = require("../models/product");
 const https = require('https');
 const crypto = require('crypto');
 
+
+// const isEnoughQuantityInStock = async (productItem) => {
+//     try {
+//         await Product.updateOne({ _id: productItem.productId, "sizes._id": productItem.sizeId },
+//             { $inc: { "sizes.$[arr].quantity": productItem.purchaseQty } },
+//             { arrayFilters: [{ "arr.quantity": { $gt: 0 } }] }
+//         ).exec()
+//         return true
+//     } catch (error) {
+//         return false;
+//     }
+// }
 exports.addOrder = (req, res) => {
     const { items, addressId, totalAmount, paymentStatus, paymentType } = req.body;
     const orderStatus = [
@@ -25,8 +38,10 @@ exports.addOrder = (req, res) => {
             isCompleted: false,
         },
     ]
-
-    items.map((item) => {
+    // if (isEnoughQuantityInStock(item)) {} else {
+    //     return res.status(400).json({ error: "Out of Stock" });
+    // }
+    items.forEach((item) => {
         const productId = item.productId;
         const sizeId = item.sizeId;
         if (productId) {

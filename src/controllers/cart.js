@@ -23,7 +23,7 @@ exports.addToCart = (req, res) => {
                     const item = cart.cartItems.find(c => c.product == product && c.size == size);
                     let condition, update;
                     if (item) {
-                        condition = { user: req.user._id, "cartItems.product": product };
+                        condition = { user: req.user._id, "cartItems.product": product, "cartItems.size": size };
                         update = {
                             $set: {
                                 "cartItems.$": cartItem
