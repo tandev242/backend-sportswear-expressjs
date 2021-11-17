@@ -76,11 +76,10 @@ exports.getCartItems = (req, res) => {
                         quantity: item.quantity
                     })
                 })
-                res.status(200).json({ cartItems });
-            } else {
-                res.status(400).json({ error: "something went wrong" })
+                return res.status(200).json({ cartItems });
             }
         })
+    res.status(400).json({ error: "Something went wrong" });
 }
 
 // Xoa 1 san pham trong CartItems

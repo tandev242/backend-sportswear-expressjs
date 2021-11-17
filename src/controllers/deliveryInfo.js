@@ -99,9 +99,10 @@ exports.getDeliveryInfo = (req, res) => {
         .exec((error, deliveryInfo) => {
             if (error) return res.status(400).json({ error });
             if (deliveryInfo) {
-                res.status(200).json({ deliveryInfo });
+                return res.status(200).json({ deliveryInfo });
             } else {
-                res.status(200).json({ deliveryInfo: {} });
+                return res.status(200).json({ deliveryInfo: {} });
             }
         })
+    res.status(400).json({ error: "Something went wrong" });
 }
