@@ -165,11 +165,15 @@ exports.updateOrderStatus = (req, res) => {
 }
 
 exports.getCustomerOrders = async (req, res) => {
-    const orders = await Order.find({})
-        .populate("items.productId", "_id name slug price discountPercent productPictures")
-        .sort({ createdAt: -1 })
-        .exec();
-    res.status(200).json({ orders });
+    try {
+        const orders = await Order.find({})
+            .populate("items.productId", "_id name slug price discountPercent productPictures")
+            .sort({ createdAt: -1 })
+            .exec();
+        res.status(200).json({ orders });
+    } catch (error) {
+        res.status(400).json({ error });
+    }
 };
 
 
@@ -181,11 +185,10 @@ exports.getOrders = (req, res) => {
         .exec((error, orders) => {
             if (error) return res.status(400).json({ error });
             if (orders) {
-                res.status(200).json({ orders });
-            } else {
-                res.status(400).json({ error: "something went wrong" });
+                return res.status(200).json({ orders });
             }
         })
+    res.status(400).json({ error: "something went wrong" });
 }
 
 
