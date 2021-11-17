@@ -187,8 +187,8 @@ exports.getOrders = (req, res) => {
             if (orders) {
                 return res.status(200).json({ orders });
             }
+            res.status(400).json({ error: "something went wrong" });
         })
-    res.status(400).json({ error: "something went wrong" });
 }
 
 
