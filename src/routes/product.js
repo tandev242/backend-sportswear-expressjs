@@ -4,8 +4,9 @@ const { addProduct, getProductsBySlug,
     deleteProductById, getProducts,
     updateProduct, updateQty, updateSizes,
     searchByProductName,
-    updateDiscountPercent } = require('../controllers/product');
-const { requireSignin, adminMiddleware, uploadCloud } = require('../common-middleware');
+    updateDiscountPercent,
+    addProductReview } = require('../controllers/product');
+const { requireSignin, adminMiddleware, userMiddleware, uploadCloud } = require('../common-middleware');
 const router = express.Router();
 
 router.post('/product/add', requireSignin, adminMiddleware, uploadCloud.array("productPicture"), addProduct);
@@ -19,5 +20,6 @@ router.post('/product/update', requireSignin, adminMiddleware, updateProduct);
 router.post('/product/updateQty', requireSignin, adminMiddleware, updateQty);
 router.post('/product/updateSizes', requireSignin, adminMiddleware, updateSizes);
 router.post('/product/updateDiscountPercent', requireSignin, adminMiddleware, updateDiscountPercent);
+router.post('/product/addProductReview', requireSignin, userMiddleware, addProductReview);
 
 module.exports = router;

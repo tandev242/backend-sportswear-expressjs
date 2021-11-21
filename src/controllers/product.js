@@ -231,6 +231,12 @@ exports.getProductDetailsBySlug = (req, res) => {
                     path: "size", select: "_id size description"
                 }
             })
+            .populate('reviews')
+            .populate({
+                path: 'reviews', populate: {
+                    path: "user", select: "_id name profilePicture"
+                }
+            })
             .exec((error, product) => {
                 if (error) return res.status(400).json({ error });
                 if (product) {
@@ -290,4 +296,25 @@ exports.searchByProductName = async (req, res) => {
         })
         .exec();
     res.status(200).json({ products, title: `Kết quả tìm kiếm: ${text}` });
+}
+
+exports.addProductReview = (req, res) => {
+    const { rating, comment, productId } = req.body;
+    Product.updateOne({ _id: productId, "reviews.user": { $ne: req.user._id } },
+        {
+            $push: {
+                "reviews": [
+                    { rating, comment, user: req.user._id },
+                ],
+
+            },
+        }
+    ).exec((error, result) => {
+        if (error) return res.status(400).json({ error });
+        if (result) {
+            res.status(202).json({ result });
+        } else {
+            res.status(400).json({ error: "something went wrong" });
+        }
+    });
 }
