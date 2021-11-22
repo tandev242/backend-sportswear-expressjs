@@ -16,6 +16,7 @@ const initDataRoutes = require('./routes/initData.admin');
 const sizeProductRoutes = require('./routes/sizeProduct');
 const sizeRoutes = require('./routes/size');
 const userRoutes = require('./routes/user');
+const statisticRoutes = require('./routes/statistic');
 
 
 
@@ -51,6 +52,8 @@ app.use("/api", initDataRoutes);
 app.use("/api", sizeProductRoutes);
 app.use("/api", sizeRoutes);
 app.use("/api", userRoutes);
+app.use("/api", statisticRoutes);
+
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
