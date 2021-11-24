@@ -16,25 +16,23 @@ exports.statisticRevenue = async (req, res) => {
                 {
                     "$group": {
                         "_id": type,
-                        "revenueMonthly": {
-                            "Jan": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 1] }, then: "$totalAmount", else: 0 } } },
-                            "Feb": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 2] }, then: "$totalAmount", else: 0 } } },
-                            "Mar": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 3] }, then: "$totalAmount", else: 0 } } },
-                            "Apr": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 4] }, then: "$totalAmount", else: 0 } } },
-                            "May": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 5] }, then: "$totalAmount", else: 0 } } },
-                            "June": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 6] }, then: "$totalAmount", else: 0 } } },
-                            "July": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 7] }, then: "$totalAmount", else: 0 } } },
-                            "Aug": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 8] }, then: "$totalAmount", else: 0 } } },
-                            "Sep": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 9] }, then: "$totalAmount", else: 0 } } },
-                            "Oct": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 10] }, then: "$totalAmount", else: 0 } } },
-                            "Nov": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 11] }, then: "$totalAmount", else: 0 } } },
-                            "Dec": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 12] }, then: "$totalAmount", else: 0 } } },
-                        }
+                        "1": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 1] }, then: "$totalAmount", else: 0 } } },
+                        "2": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 2] }, then: "$totalAmount", else: 0 } } },
+                        "3": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 3] }, then: "$totalAmount", else: 0 } } },
+                        "4": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 4] }, then: "$totalAmount", else: 0 } } },
+                        "5": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 5] }, then: "$totalAmount", else: 0 } } },
+                        "6": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 6] }, then: "$totalAmount", else: 0 } } },
+                        "7": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 7] }, then: "$totalAmount", else: 0 } } },
+                        "8": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 8] }, then: "$totalAmount", else: 0 } } },
+                        "9": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 9] }, then: "$totalAmount", else: 0 } } },
+                        "10": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 10] }, then: "$totalAmount", else: 0 } } },
+                        "11": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 11] }, then: "$totalAmount", else: 0 } } },
+                        "12": { $sum: { $cond: { if: { $eq: [{ $month: "$createdAt" }, 12] }, then: "$totalAmount", else: 0 } } },
                     }
                 }
             ]);
             if (revenueMonthly) {
-                return res.status(200).json({ revenue })
+                return res.status(200).json({ revenueMonthly })
             }
             res.status(400).json({ error: "something went wrong" })
         }
