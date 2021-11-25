@@ -7,7 +7,7 @@ exports.statisticRevenue = async (req, res) => {
     const dateTo = new Date(req.body.dateTo);
     try {
         if (type == "day") {
-            const dailyRevenue = await Order.aggregate(
+            const revenue = await Order.aggregate(
                 [
                     {
                         "$match": {
@@ -38,12 +38,12 @@ exports.statisticRevenue = async (req, res) => {
                     }
                 ]
             )
-            if (dailyRevenue) {
-                return res.status(200).json({ dailyRevenue })
+            if (revenue) {
+                return res.status(200).json({ revenue })
             }
             res.status(400).json({ error: "something went wrong" })
         } else if (type == "month") {
-            const monthlyRevenue = await Order.aggregate(
+            const revenue = await Order.aggregate(
                 [
                     {
                         "$match": {
@@ -74,12 +74,12 @@ exports.statisticRevenue = async (req, res) => {
                     }
                 ]
             )
-            if (monthlyRevenue) {
-                return res.status(200).json({ monthlyRevenue })
+            if (revenue) {
+                return res.status(200).json({ revenue })
             }
             res.status(400).json({ error: "something went wrong" })
         } else if (type == "year") {
-            const annualRevenue = await Order.aggregate(
+            const revenue = await Order.aggregate(
                 [
                     {
                         "$match": {
@@ -110,12 +110,12 @@ exports.statisticRevenue = async (req, res) => {
                     }
                 ]
             )
-            if (annualRevenue) {
-                return res.status(200).json({ annualRevenue })
+            if (revenue) {
+                return res.status(200).json({ revenue })
             }
             res.status(400).json({ error: "something went wrong" })
-        }else{
-            res.status(400).json({ error: "Syntax is wrong"})
+        } else {
+            res.status(400).json({ error: "Syntax is wrong" })
         }
 
     } catch (error) {
