@@ -5,6 +5,6 @@ const { statisticRevenue } = require('../controllers/statistic');
 
 const router = express.Router();
 
-router.post('/statistic/revenueMonthly', requireSignin, adminMiddleware, statisticRevenue);
+router.post('/statistic/getRevenue', requireSignin, adminMiddleware, statisticRevenue);
 
 module.exports = router;
