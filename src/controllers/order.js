@@ -194,7 +194,7 @@ exports.updateStatus = (req, res) => {
 
 exports.getCustomerOrders = async (req, res) => {
     try {
-        const orders = await Order.find({})
+        const orders = await Order.find({ paymentStatus: { "$ne": "cancelled" } })
             .populate("items.productId", "_id name slug price discountPercent productPictures")
             .sort({ createdAt: -1 })
             .exec();
@@ -206,7 +206,7 @@ exports.getCustomerOrders = async (req, res) => {
 
 
 exports.getOrders = (req, res) => {
-    Order.find({ user: req.user._id, paymentStatus: { "$ne": "cancelled" } })
+    Order.find({ user: req.user._id })
         .populate("items.productId", "_id name slug price discountPercent productPictures")
         .populate("items.sizeId", "_id size description")
         .sort({ createdAt: -1 })
