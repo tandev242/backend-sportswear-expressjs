@@ -22,7 +22,8 @@ exports.statisticRevenue = async (req, res) => {
             [
                 {
                     "$match": {
-                        "createdAt": { "$gte": dateFrom, "$lte": dateTo }
+                        "createdAt": { "$gte": dateFrom, "$lte": dateTo },
+                        "paymentStatus": { "$ne": "cancelled" }
                     }
                 },
                 {
