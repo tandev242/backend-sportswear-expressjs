@@ -206,7 +206,7 @@ exports.getCustomerOrders = async (req, res) => {
 
 
 exports.getOrders = (req, res) => {
-    Order.find({ user: req.user._id })
+    Order.find({ user: req.user._id, paymentStatus: { "$ne": "cancelled" } })
         .populate("items.productId", "_id name slug price discountPercent productPictures")
         .populate("items.sizeId", "_id size description")
         .sort({ createdAt: -1 })
