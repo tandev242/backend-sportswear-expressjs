@@ -158,26 +158,39 @@ exports.getOrder = (req, res) => {
         })
 }
 
-exports.updateOrderStatus = (req, res) => {
+exports.updateStatus = (req, res) => {
     const { orderId, type } = req.body;
-    Order.findOneAndUpdate({ _id: orderId, "orderStatus.type": type },
-        {
-            $set: {
-                "orderStatus.$": [
-                    { type, date: new Date(), isCompleted: true },
-                ],
+    if (req.user.role === 'admin') {
+        Order.updateOne({ _id: orderId, "orderStatus.type": type },
+            {
+                $set: {
+                    "orderStatus.$": [
+                        { type, date: new Date(), isCompleted: true },
+                    ],
 
-            },
-        }
-    ).exec((error, order) => {
-        if (error) return res.status(400).json({ error });
-        if (order) {
-            res.status(202).json({ order });
-        } else {
-            res.status(400).json({ error: "something went wrong" });
-        }
-    });
+                },
+            }
+        ).exec((error, result) => {
+            if (error) return res.status(400).json({ error });
+            if (result) {
+                res.status(202).json({ result });
+            } else {
+                res.status(400).json({ error: "something went wrong" });
+            }
+        });
+    } else {
+        Order.updateOne({ _id: orderId }, { paymentStatus: type })
+            .exec((error, result) => {
+                if (error) return res.status(400).json({ error });
+                if (result) {
+                    res.status(202).json({ result });
+                } else {
+                    res.status(400).json({ error: "something went wrong" });
+                }
+            });
+    }
 }
+
 
 exports.getCustomerOrders = async (req, res) => {
     try {
