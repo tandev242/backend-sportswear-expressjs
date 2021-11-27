@@ -269,19 +269,33 @@ exports.deleteProductById = (req, res) => {
 }
 
 exports.getProducts = async (req, res) => {
-    const products = await Product.find({})
-        .populate({ path: "category", select: "_id name categoryImage" })
-        .populate({ path: "brand", select: "_id name brandImage" })
-        .populate('sizes')
-        .populate({
-            path: 'sizes', populate: {
-                path: "size", select: "_id size description"
-            }
-        })
-        .exec();
-    res.status(200).json({ products });
-}
+    try {
+        const products = await Product.find({})
+            .populate({ path: "category", select: "_id name categoryImage" })
+            .populate({ path: "brand", select: "_id name brandImage" })
+            .populate('sizes')
+            .populate({
+                path: 'sizes', populate: {
+                    path: "size", select: "_id size description"
+                }
+            })
+            .populate('reviews')
+            .populate({
+                path: 'reviews', populate: {
+                    path: "user", select: "_id name profilePicture"
+                }
+            })
+            .exec()
 
+        if (products) {
+            res.status(200).json({ products });
+        } else {
+            res.status(400).json({ error: "something went wrong" });
+        }
+    } catch (error) {
+        res.status(400).json({ error });
+    }
+}
 
 exports.searchByProductName = async (req, res) => {
     const { text } = req.body;
