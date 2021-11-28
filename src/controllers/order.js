@@ -161,7 +161,7 @@ exports.getOrder = (req, res) => {
 exports.updateStatus = (req, res) => {
     const { orderId, type } = req.body;
     if (req.user.role === 'admin') {
-        Order.updateOne({ _id: orderId, "orderStatus.type": type },
+        Order.findOneAndUpdate({ _id: orderId, "orderStatus.type": type },
             {
                 $set: {
                     "orderStatus.$": [
