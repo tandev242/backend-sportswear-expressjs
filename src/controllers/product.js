@@ -314,7 +314,7 @@ exports.searchByProductName = async (req, res) => {
 
 exports.addProductReview = (req, res) => {
     const { rating, comment, productId } = req.body;
-    Product.updateOne({ _id: productId, "reviews.user": { $ne: req.user._id } },
+    Product.findOneAndUpdate({ _id: productId, "reviews.user": { $ne: req.user._id } },
         {
             $push: {
                 "reviews": [
@@ -326,7 +326,7 @@ exports.addProductReview = (req, res) => {
     ).exec((error, result) => {
         if (error) return res.status(400).json({ error });
         if (result) {
-            res.status(202).json({ result });
+            res.status(202).json({ message: "update successfully" });
         } else {
             res.status(400).json({ error: "something went wrong" });
         }

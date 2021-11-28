@@ -161,7 +161,7 @@ exports.getOrder = (req, res) => {
 exports.updateStatus = (req, res) => {
     const { orderId, type } = req.body;
     if (req.user.role === 'admin') {
-        Order.findOneAndUpdate({ _id: orderId, "orderStatus.type": type },
+        Order.updateOne({ _id: orderId, "orderStatus.type": type },
             {
                 $set: {
                     "orderStatus.$": [
@@ -170,20 +170,20 @@ exports.updateStatus = (req, res) => {
 
                 },
             }
-        ).exec((error, order) => {
+        ).exec((error, result) => {
             if (error) return res.status(400).json({ error });
-            if (order) {
-                res.status(202).json({ message: "Update successfully" });
+            if (result) {
+                res.status(202).json({ result });
             } else {
                 res.status(400).json({ error: "something went wrong" });
             }
         });
     } else {
-        Order.findOneAndUpdate({ _id: orderId }, { paymentStatus: type })
+        Order.updateOne({ _id: orderId }, { paymentStatus: type })
             .exec((error, order) => {
                 if (error) return res.status(400).json({ error });
                 if (order) {
-                    res.status(202).json({ message: "Update successfully" });
+                    res.status(202).json({ result });
                 } else {
                     res.status(400).json({ error: "something went wrong" });
                 }
