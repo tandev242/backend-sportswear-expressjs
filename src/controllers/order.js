@@ -170,20 +170,20 @@ exports.updateStatus = (req, res) => {
 
                 },
             }
-        ).exec((error, result) => {
+        ).exec((error, order) => {
             if (error) return res.status(400).json({ error });
-            if (result) {
-                res.status(202).json({ result });
+            if (order) {
+                res.status(202).json({ message: "Update successfully" });
             } else {
                 res.status(400).json({ error: "something went wrong" });
             }
         });
     } else {
-        Order.updateOne({ _id: orderId }, { paymentStatus: type })
-            .exec((error, result) => {
+        Order.findOneAndUpdate({ _id: orderId }, { paymentStatus: type })
+            .exec((error, order) => {
                 if (error) return res.status(400).json({ error });
-                if (result) {
-                    res.status(202).json({ result });
+                if (order) {
+                    res.status(202).json({ message: "Update successfully" });
                 } else {
                     res.status(400).json({ error: "something went wrong" });
                 }
