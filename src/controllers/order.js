@@ -80,7 +80,9 @@ exports.addOrder = (req, res) => {
 }
 
 exports.addOrderByPaymentMomo = (req, res) => {
-    const { items, addressId, totalAmount, paymentStatus, paymentType } = req.body;
+    const { extraData } = req.body;
+    const data = JSON.parse(extraData.substring(0, extraData.length - 1));
+    const { userId, items, addressId, totalAmount, paymentStatus, paymentType } = data;
     const orderStatus = [
         {
             type: 'ordered',
@@ -106,7 +108,7 @@ exports.addOrderByPaymentMomo = (req, res) => {
         const sizeId = item.sizeId;
         if (productId) {
             Cart.updateOne(
-                { user: req.user._id },
+                { user: userId},
                 {
                     $pull: {
                         cartItems: {
@@ -123,7 +125,7 @@ exports.addOrderByPaymentMomo = (req, res) => {
     })
 
     const order = new Order({
-        user: req.user._id,
+        user: userId,
         addressId,
         totalAmount,
         items,
@@ -230,10 +232,10 @@ exports.paymentWithMomo = async (req, res) => {
     const orderId = requestId;
     const orderInfo = "Thanh toán giày tại DoubleT";
     const redirectUrl = "https://doublet.vercel.app/cart";
-    const ipnUrl = "https://webhook.site/21039e28-80b1-4c48-a98e-4d06cdadc16d";
+    const ipnUrl = "https://api-sportswear.herokuapp.com/api/order/addOrderByPaymentMomo";
     const amount = order.totalAmount;
     const requestType = "captureWallet"
-    const extraData = ""; //pass empty value if your merchant does not have stores
+    const extraData = JSON.stringify({ ...order, userId: req.user._id }) + "@"; //pass empty value if your merchant does not have stores
     const rawSignature = "accessKey=" + accessKey + "&amount=" + amount + "&extraData=" + extraData + "&ipnUrl=" + ipnUrl + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&partnerCode=" + partnerCode + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId + "&requestType=" + requestType
     const signature = crypto.createHmac('sha256', secretkey)
         .update(rawSignature)
@@ -248,6 +250,7 @@ exports.paymentWithMomo = async (req, res) => {
         orderInfo: orderInfo,
         redirectUrl: redirectUrl,
         ipnUrl: ipnUrl,
+        orderObj: order,
         extraData: extraData,
         requestType: requestType,
         signature: signature,
