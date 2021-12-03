@@ -108,7 +108,7 @@ exports.addOrderByPaymentMomo = (req, res) => {
         const sizeId = item.sizeId;
         if (productId) {
             Cart.updateOne(
-                { user: userId},
+                { user: userId },
                 {
                     $pull: {
                         cartItems: {
@@ -182,9 +182,9 @@ exports.updateStatus = (req, res) => {
         });
     } else {
         Order.updateOne({ _id: orderId }, { paymentStatus: type })
-            .exec((error, order) => {
+            .exec((error, result) => {
                 if (error) return res.status(400).json({ error });
-                if (order) {
+                if (result) {
                     res.status(202).json({ result });
                 } else {
                     res.status(400).json({ error: "something went wrong" });
