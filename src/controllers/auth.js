@@ -169,22 +169,26 @@ exports.sendOtpToEmail = (req, res) => {
         subject: "Mã OTP sẽ hết hạn sau 10 phút, OTP của bạn là: ", // Subject of the mail.
         html: `<h1> ${otp} </h1>`, // Sending OTP
       };
-      transporter.sendMail(details, function (error, data) {
-        if (error) res.status(400).json({ error });
-        if (data) {
-          const otpObj = new Otp({ user: user._id, generatedOtp: otp });
-          otpObj.save((error, otp) => {
-            if (error) return res.status(400).json({ error });
-            if (otp) {
-              res.status(201).json({ message: "generate Otp successfully" });
-            } else {
-              res.status(400).json({ error: "something went wrong" });
-            }
-          });
-        } else {
-          res.status(400).json({ error: "something went wrong" });
-        }
-      });
+      try {
+        transporter.sendMail(details, function (error, data) {
+          if (error) res.status(400).json({ error });
+          if (data) {
+            const otpObj = new Otp({ user: user._id, generatedOtp: otp });
+            otpObj.save((error, otp) => {
+              if (error) return res.status(400).json({ error });
+              if (otp) {
+                res.status(201).json({ message: "generate Otp successfully" });
+              } else {
+                res.status(400).json({ error: "something went wrong" });
+              }
+            });
+          } else {
+            res.status(400).json({ error: "something went wrong" });
+          }
+        });
+      } catch (error) {
+        res.status(400).json({ error });
+      }
     } else {
       res.status(400).json({ error: "user is not exist" });
     }
