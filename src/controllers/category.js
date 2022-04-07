@@ -63,6 +63,17 @@ exports.getCategories = (req, res) => {
     })
 }
 
+exports.getFlatCategories = (req, res) => {
+    Category.find({}).exec((error, categories) => {
+        if (error) {
+            return res.status(400).json({ error })
+        } else {
+            return res.status(200).json({ categories });
+        }
+    })
+}
+
+
 exports.deleteCategories = async (req, res) => {
     const { ids } = req.body.payload;
     const deletedCategories = [];
