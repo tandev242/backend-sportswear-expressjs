@@ -17,7 +17,7 @@ const sizeProductRoutes = require('./routes/sizeProduct');
 const sizeRoutes = require('./routes/size');
 const userRoutes = require('./routes/user');
 const statisticRoutes = require('./routes/statistic');
-
+const behaviorRoutes = require('./routes/behavior');
 
 
 env.config();
@@ -53,6 +53,8 @@ app.use("/api", sizeProductRoutes);
 app.use("/api", sizeRoutes);
 app.use("/api", userRoutes);
 app.use("/api", statisticRoutes);
+app.use("/api", behaviorRoutes);
+
 
 
 app.listen(process.env.PORT, () => {
