@@ -11,21 +11,21 @@ exports.addBehavior = async (req, res) => {
             }
             if (type == "buy") {
                 update = {
-                    "$inc": { "buy": 1 }
+                    "$inc": { "buy": 1, "score": 5 }
                 }
             }
             else if (type == "addToCart") {
                 update = {
-                    "$inc": { "addToCart": 1 }
+                    "$inc": { "addToCart": 1, "score": 3 }
                 }
             } else if (type == "rate") {
                 update = {
-                    "$inc": { "rate": 1 }
+                    "$inc": { "rate": 1, "score": 3 }
                 }
             }
             else {
                 update = {
-                    "$inc": { "view": 1 }
+                    "$inc": { "view": 1, "score": 1 }
                 }
             }
             const updatedBehavior = await Behavior.findOneAndUpdate(condition, update)
@@ -40,6 +40,7 @@ exports.addBehavior = async (req, res) => {
             const buy = type == "buy" ? 1 : 0
             const addToCart = type == "addToCart" ? 1 : 0
             const rate = type == "rate" ? 1 : 0
+            const score = view * 1 + buy * 5 + addToCart * 3 + rate * 3
 
             const newBehavior = new Behavior({
                 user: req.user._id,
@@ -47,7 +48,8 @@ exports.addBehavior = async (req, res) => {
                 view,
                 buy,
                 addToCart,
-                rate
+                rate,
+                score
             })
             newBehavior.save((error, behavior) => {
                 if (error) return res.status(400).json({ error })
