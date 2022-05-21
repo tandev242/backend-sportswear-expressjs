@@ -1,25 +1,18 @@
-const DeliveryInfo = require("../models/deliveryInfo");
+const DeliveryInfo = require("../models/deliveryInfo")
 
-exports.addDeliveryInfo = (req, res) => {
-
-    const { address } = req.body;
-    if (address) {
+exports.addDeliveryInfo = async (req, res) => {
+    const { address } = req.body
+    try {
+        var updatedAddress 
         if (address._id) {
-            DeliveryInfo.findOneAndUpdate({ user: req.user._id, "address._id": address._id },
+            updatedAddress = await DeliveryInfo.findOneAndUpdate({ user: req.user._id, "address._id": address._id },
                 {
                     $set: {
                         "address.$": address
                     }
-                }).exec((error, address) => {
-                    if (error) return res.status(400).json({ error });
-                    if (address) {
-                        res.status(201).json({ address });
-                    } else {
-                        res.status(400).json({ error: "something went wrong" })
-                    }
                 })
         } else {
-            DeliveryInfo.findOneAndUpdate(
+            updatedAddress = await DeliveryInfo.findOneAndUpdate(
                 { user: req.user._id },
                 {
                     $push: {
@@ -27,23 +20,21 @@ exports.addDeliveryInfo = (req, res) => {
                     },
                 },
                 { new: true, upsert: true }
-            ).exec((error, address) => {
-                if (error) return res.status(400).json({ error });
-                if (address) {
-                    res.status(201).json({ address });
-                } else {
-                    res.status(400).json({ error: "something went wrong" })
-                }
-            });
+            )
         }
-    } else {
-        res.status(400).json({ error: "Params address required" });
+        if (updatedAddress) {
+            res.status(201).json({ address: updatedAddress })
+        } else {
+            res.status(400).json({ error: "something went wrong" })
+        }
+    } catch (error) {
+        res.status(400).json({ error })
     }
 }
 
 
 exports.deleteDeliveryInfo = (req, res) => {
-    const { addressId } = req.body.payload;
+    const { addressId } = req.body.payload
     if (addressId) {
         DeliveryInfo.findOneAndUpdate({ user: req.user._id },
             {
@@ -53,20 +44,20 @@ exports.deleteDeliveryInfo = (req, res) => {
                     }
                 }
             }).exec((error, result) => {
-                if (error) return res.status(400).json({ error });
+                if (error) return res.status(400).json({ error })
                 if (result) {
-                    res.status(202).json({ result });
+                    res.status(202).json({ result })
                 } else {
                     res.status(400).json({ error: "something went wrong" })
                 }
             })
     } else {
-        res.status(400).json({ error: "Params address required" });
+        res.status(400).json({ error: "Params address required" })
     }
 }
 
 exports.setDefaultDeliveryInfo = (req, res) => {
-    const { addressId } = req.body.payload;
+    const { addressId } = req.body.payload
     if (addressId) {
         DeliveryInfo.updateOne({ user: req.user._id },
             {
@@ -80,16 +71,16 @@ exports.setDefaultDeliveryInfo = (req, res) => {
                             "address.$.isDefault": true
                         }
                     }).exec((error, result) => {
-                        if (error) return res.status(400).json({ error });
+                        if (error) return res.status(400).json({ error })
                         if (result) {
-                            res.status(201).json({ result: "Set Default successful" });
+                            res.status(201).json({ result: "Set Default successful" })
                         } else {
                             res.status(400).json({ error: "something went wrong" })
                         }
                     })
             })
     } else {
-        res.status(400).json({ error: "Params address required" });
+        res.status(400).json({ error: "Params address required" })
     }
 }
 
@@ -97,11 +88,11 @@ exports.getDeliveryInfo = (req, res) => {
     DeliveryInfo.findOne({ user: req.user._id })
         .populate("user", "_id name profilePicture")
         .exec((error, deliveryInfo) => {
-            if (error) return res.status(400).json({ error });
+            if (error) return res.status(400).json({ error })
             if (deliveryInfo) {
-                res.status(200).json({ deliveryInfo });
+                res.status(200).json({ deliveryInfo })
             } else {
-                res.status(200).json({ deliveryInfo: {} });
+                res.status(200).json({ deliveryInfo: {} })
             }
         })
 }

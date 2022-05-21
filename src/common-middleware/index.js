@@ -26,18 +26,22 @@ exports.uploadCloud = multer({ storage });
 // Auth User
 exports.requireSignin = (req, res, next) => {
     if (req.headers.authorization) {
-
-        // headers.authorization kieu "User sdadsadsadsasdas" la table + token 
-        const token = req.headers.authorization.split(' ')[1];
-        // decode token de lay User theo cai secret key
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-
-        // luu user vao request
-        req.user = user;
+        try {
+            const token = req.headers.authorization.split(' ')[1]
+            // decode token de lay User theo cai secret key
+            const user = jwt.verify(token, process.env.JWT_SECRET)
+            // luu user vao request
+            req.user = user
+        } catch (err) {
+            if (err.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: 'Token expired' })
+            }
+            return res.status(400).json({ message: err.message })
+        }
     } else {
-        return res.status(400).json({ message: "Authorization required" });
+        return res.status(400).json({ message: "Authorization required" })
     }
-    next();
+    next()
 }
 
 exports.userMiddleware = (req, res, next) => {

@@ -1,4 +1,6 @@
 const Behavior = require("../models/behavior")
+const { getIdsOfRecommendedProducts } = require("../services/recomService")
+const Product = require('../models/product');
 
 exports.addBehavior = async (req, res) => {
     const { product, type } = req.body
@@ -62,3 +64,21 @@ exports.addBehavior = async (req, res) => {
         return res.status(400).json({ error })
     }
 }
+
+exports.getRecommendedProductsByBehavior = async (req, res) => {
+    const { _id } = req.user
+    try {
+      const ids = await getIdsOfRecommendedProducts( _id, "behavior")
+      let products = await Product.find({
+        '_id': { $in: ids }
+      })
+      if (products) {
+        res.status(200).json({ products })
+      } else {
+        res.status(400).json({ error: "Something went wrong" })
+      }
+    } catch (error) {
+      res.status(400).json({ error })
+    }
+  }
+  
