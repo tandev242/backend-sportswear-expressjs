@@ -6,9 +6,7 @@ const { OAuth2Client } = require("google-auth-library")
 const client_id = process.env.GOOGLE_CLIENT_ID
 const client = new OAuth2Client(client_id)
 const {
-    generateAccessToken,
-    generateRefreshToken,
-    deleteRefreshToken,
+    generateAccessToken
 } = require('../services/token')
 
 
@@ -29,10 +27,9 @@ exports.signup = async (req, res) => {
         })
         if (newUser) {
             let { _id, name, email, role } = newUser;
-            const accessToken = await generateAccessToken({ _id, email, role })
-            const refreshToken = await generateRefreshToken({ _id, email, role })
+            const token = await generateAccessToken({ _id, email, role })
             // response token and user info
-            res.status(201).json({ accessToken, refreshToken, user: { _id, name, email, role } })
+            res.status(201).json({ token, user: { _id, name, email, role } })
         }
     } catch (error) {
         return res.status(400).json({ error })
@@ -46,10 +43,9 @@ exports.signin = async (req, res) => {
             const isPasswordMatch = await existingUser.authenticate(req.body.password)
             if (isPasswordMatch) {
                 const { _id, name, email, profilePicture, role } = existingUser
-                const accessToken = await generateAccessToken({ _id, email, role })
-                const refreshToken = await generateRefreshToken({ _id, email, role })
+                const token = await generateAccessToken({ _id, email, role })
                 // response token and user info
-                res.status(200).json({ accessToken, refreshToken, user: { _id, name, email, profilePicture, role } })
+                res.status(200).json({ token, user: { _id, name, email, profilePicture, role } })
             } else {
                 res.status(400).json({ error: "Password incorrect" })
             }
@@ -64,7 +60,6 @@ exports.signin = async (req, res) => {
 exports.signout = async (req, res) => {
     try {
         const userId = req.user._id
-        await deleteRefreshToken(userId)
         res.status(200).json({ message: 'Delete refresh token successfully' })
     } catch (error) {
         res.status(400).json({ error })
@@ -82,10 +77,9 @@ exports.signinWithGoogle = async (req, res) => {
         const existingUser = await User.findOne({ email })
         if (existingUser) {
             const { _id, name, email, profilePicture, role } = existingUser
-            const accessToken = await generateAccessToken({ _id, email, role })
-            const refreshToken = await generateRefreshToken({ _id, email, role })
+            const token = await generateAccessToken({ _id, email, role })
             // response token and user info
-            res.status(201).json({ accessToken, refreshToken, user: { _id, name, email, profilePicture, role } })
+            res.status(201).json({ token, user: { _id, name, email, profilePicture, role } })
         } else {
             const newUser = {
                 name,
@@ -94,10 +88,9 @@ exports.signinWithGoogle = async (req, res) => {
             }
             let user = await User.create(newUser)
             const { _id, name, email, profilePicture, role } = user
-            const accessToken = await generateAccessToken({ _id, email, role })
-            const refreshToken = await generateRefreshToken({ _id, email, role })
+            const token = await generateAccessToken({ _id, email, role })
             // response token and user info
-            res.status(201).json({ accessToken, refreshToken, user: { _id, name, email, profilePicture, role } })
+            res.status(201).json({ token, user: { _id, name, email, profilePicture, role } })
         }
     } catch (error) {
         res.status(400).json({ error })

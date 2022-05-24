@@ -6,12 +6,13 @@ const { validateAddDeliveryInfoRequest, isRequestValidated } = require('../valid
 
 const router = express.Router()
 
-router.post('/add', 
+router.post('/deliveryInfo/add',
+    requireSignin,
     validateAddDeliveryInfoRequest,
     isRequestValidated,
     addDeliveryInfo)
-router.get('/get', requireSignin, userMiddleware, getDeliveryInfo);
-router.post('/delete', requireSignin, userMiddleware, deleteDeliveryInfo);
-router.post('/setDefaultDeliveryInfo', requireSignin, userMiddleware, setDefaultDeliveryInfo)
+router.get('/deliveryInfo/get', requireSignin, userMiddleware, getDeliveryInfo);
+router.post('/deliveryInfo/delete', requireSignin, userMiddleware, deleteDeliveryInfo);
+router.post('/deliveryInfo/setDefaultDeliveryInfo', requireSignin, userMiddleware, setDefaultDeliveryInfo)
 
 module.exports = router

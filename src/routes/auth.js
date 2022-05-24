@@ -3,7 +3,6 @@ const { signup, signin, signinWithGoogle, signout, isUserLoggedIn, sendOtpToEmai
 const { verifyOtp } = require('../controllers/otp')
 const { validateSignupRequest, validateSigninRequest, validateForgotPasswordRequest, isRequestValidated } = require('../validators')
 const { requireSignin } = require('../common-middleware')
-const { refreshToken } = require('../controllers/token')
 
 const router = express.Router()
 
@@ -14,7 +13,6 @@ router.post('/auth/signout', requireSignin, signout)
 router.post('/auth/verifyOtp', verifyOtp)
 router.post('/auth/sendOtpToEmail', sendOtpToEmail)
 router.post('/auth/updateForgetPassword', validateForgotPasswordRequest, updateForgetPassword)
-router.post('/auth/refreshToken', refreshToken)
 router.post('/auth/isUserLoggedIn', requireSignin, isUserLoggedIn)
 
 module.exports = router
