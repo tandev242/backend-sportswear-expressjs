@@ -68,17 +68,21 @@ exports.addBehavior = async (req, res) => {
 exports.getRecommendedProductsByBehavior = async (req, res) => {
     const { _id } = req.user
     try {
-      const ids = await getIdsOfRecommendedProducts( _id, "behavior")
-      let products = await Product.find({
-        '_id': { $in: ids }
-      })
-      if (products) {
-        res.status(200).json({ products })
-      } else {
-        res.status(400).json({ error: "Something went wrong" })
-      }
+        const ids = await getIdsOfRecommendedProducts(_id, "behavior")
+        let products = await Product.find({
+            '_id': { $in: ids }
+        })
+            .populate({
+                path: 'sizes', populate: {
+                    path: "size", select: "_id size description"
+                }
+            })
+        if (products) {
+            res.status(200).json({ products })
+        } else {
+            res.status(400).json({ error: "Something went wrong" })
+        }
     } catch (error) {
-      res.status(400).json({ error })
+        res.status(400).json({ error })
     }
-  }
-  
+}

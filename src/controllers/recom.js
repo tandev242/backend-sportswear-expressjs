@@ -11,6 +11,11 @@ exports.getRecommendedProductsById = async (req, res) => {
     let products = await Product.find({
       '_id': { $in: ids }
     })
+      .populate({
+        path: 'sizes', populate: {
+          path: "size", select: "_id size description"
+        }
+      })
     if (products) {
       res.status(200).json({ products })
     } else {

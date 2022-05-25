@@ -107,14 +107,12 @@ exports.getProductsBySlug = (req, res) => {
     const { slug, type } = req.params
     if ((type === "category" || type === "brand") && slug === "all") {
         Product.find({})
-            .populate({ path: "category", select: "_id name categoryImage" })
-            .populate({ path: "brand", select: "_id name brandImage" })
             .populate('sizes')
             .populate({
                 path: 'sizes', populate: {
                     path: "size", select: "_id size description"
                 }
-            }).limit(100)
+            }).limit(15)
             .exec((error, products) => {
                 if (error) return res.status(400).json({ error })
                 if (products) {
@@ -139,14 +137,12 @@ exports.getProductsBySlug = (req, res) => {
                             categoriesArr.push(...categories)
                         }
                         Product.find({ category: { $in: categoriesArr } })
-                            .populate({ path: "category", select: "_id name categoryImage" })
-                            .populate({ path: "brand", select: "_id name brandImage" })
                             .populate('sizes')
                             .populate({
                                 path: 'sizes', populate: {
                                     path: "size", select: "_id size description"
                                 }
-                            }).limit(100)
+                            }).limit(15)
                             .exec((error, products) => {
                                 if (error) return res.status(400).json({ error })
                                 if (products) {
@@ -166,15 +162,13 @@ exports.getProductsBySlug = (req, res) => {
             if (error) return res.status(400).json({ error })
             if (brand) {
                 Product.find({ brand: brand._id })
-                    .populate({ path: "category", select: "_id name categoryImage" })
-                    .populate({ path: "brand", select: "_id name brandImage" })
                     .populate('sizes')
                     .populate({
                         path: 'sizes', populate: {
                             path: "size", select: "_id size description"
                         }
                     })
-                    .limit(100)
+                    .limit(15)
                     .exec((error, products) => {
                         if (error) return res.status(400).json({ error })
                         if (products) {
@@ -270,18 +264,12 @@ exports.deleteProductById = (req, res) => {
 exports.getProducts = async (req, res) => {
     try {
         const products = await Product.find({})
-            .populate({ path: "category", select: "_id name categoryImage" })
-            .populate({ path: "brand", select: "_id name brandImage" })
             .populate({
                 path: 'sizes', populate: {
                     path: "size", select: "_id size description"
                 }
             })
-            .populate({
-                path: 'reviews', populate: {
-                    path: "user", select: "_id name profilePicture"
-                }
-            }).limit(100)
+            .limit(100)
             .exec()
 
         if (products) {
