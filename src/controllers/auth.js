@@ -141,9 +141,13 @@ exports.sendOtpToEmail = async (req, res) => {
         const existingUser = await User.findOne({ email })
         if (existingUser) {
             const otp = Math.floor(100000 + Math.random() * 900000).toString()
-            await sendOtp(email, otp)
-            await Otp.create({ user: existingUser._id, generatedOtp: otp })
-            res.status(201).json({ message: "Otp sent to email successfully" })
+            const isSent = await sendOtp(email, otp)
+            if (isSent) {
+                await Otp.create({ user: existingUser._id, generatedOtp: otp })
+                res.status(201).json({ message: "Otp sent to email successfully" })
+            } else {
+                res.status(400).json({ error: "Can't send otp now !" })
+            }
         } else {
             res.status(400).json({ error: "Email does not exists" })
         }

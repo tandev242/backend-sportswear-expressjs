@@ -5,7 +5,7 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: "doubletsport.shop@gmail.com", //email ID
         pass: "matkhau1", //Password
-    },
+    }
 })
 
 exports.sendOtp = async (email, OTP) => {
@@ -16,9 +16,14 @@ exports.sendOtp = async (email, OTP) => {
             subject: "Mã OTP của bạn :", // Subject of the mail.
             html: createOutput(OTP), // Sending OTP
         }
-        await transporter.sendMail(details)
+        const isSent = await transporter.sendMail(details)
+        if (isSent) {
+            return true
+        }
+        return false
     } catch (error) {
         console.log(error);
+        return false;
     }
 }
 
