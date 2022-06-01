@@ -3,6 +3,10 @@ const env = require('dotenv');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require("cors");
+const https = require("https");
+const path = require("path");
+const fs = require("fs");
+
 
 // region routes
 const authRoutes = require('./routes/auth');
@@ -56,7 +60,12 @@ app.use("/api", statisticRoutes);
 app.use("/api", recomRoutes);
 
 
+const sslServer = https.createServer({
+    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
+}, app)
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
+
+sslServer.listen(process.env.PORT, () => {
+    console.log(`Secure Server is running on port ${process.env.PORT}`);
 })
