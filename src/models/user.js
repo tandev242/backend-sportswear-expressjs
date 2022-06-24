@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        required: true,
         trim: true,
         unique: true,
         index: true,
@@ -31,6 +30,8 @@ const userSchema = new mongoose.Schema({
     },
 
     profilePicture: { type: String },
+    
+    isDisabled: false
 },
     { timestamps: true }
 )

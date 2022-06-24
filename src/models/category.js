@@ -17,6 +17,7 @@ const categorySchema = new mongoose.Schema(
         parentId: {
             type: String,
         },
+        isDisabled: false
     },
     { timestamps: true }
 );

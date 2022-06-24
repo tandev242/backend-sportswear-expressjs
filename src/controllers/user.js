@@ -3,7 +3,7 @@ const Otp = require("../models/otp")
 const bcrypt = require("bcrypt")
 
 exports.getUsers = (req, res) => {
-  User.find({}).exec((error, users) => {
+  User.find({ isDisable: { $ne: true } }).exec((error, users) => {
     if (error) {
       return res.status(400).json({ error })
     }
@@ -59,7 +59,7 @@ exports.updateUserInfo = async (req, res) => {
 exports.deleteUserById = async (req, res) => {
   const { _id } = req.body.payload
   try {
-    const user = await User.findOneAndDelete({ _id })
+    const user = await User.findOneAndUpdate({ _id }, { isDisabled: true })
     if (user) {
       res.status(204).json({ message: "deleted successfully" })
     } else {

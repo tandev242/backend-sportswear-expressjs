@@ -46,7 +46,7 @@ const productSchema = new mongoose.Schema({
     sizes: [sizeProductSchema],
     brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
-
+    isDisabled: false
 }, { timestamps: true });
 
 

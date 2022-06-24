@@ -106,7 +106,7 @@ exports.updateSizes = (req, res) => {
 exports.getProductsBySlug = (req, res) => {
     const { slug, type } = req.params
     if ((type === "category" || type === "brand") && slug === "all") {
-        Product.find({})
+        Product.find({ isDisable: { $ne: true } })
             .populate({ path: "category", select: "_id name categoryImage" })
             .populate({ path: "brand", select: "_id name brandImage" })
             .populate('sizes')
@@ -125,7 +125,7 @@ exports.getProductsBySlug = (req, res) => {
             })
     }
     else if (type === "category") {
-        Category.findOne({ slug }).exec((error, category) => {
+        Category.findOne({ slug, isDisable: { $ne: true } }).exec((error, category) => {
             if (error) return res.status(400).json({ error })
             if (category) {
                 // Product.find({ $or: [{ parentId: category._id }, { category: category._id }] })
@@ -162,7 +162,7 @@ exports.getProductsBySlug = (req, res) => {
         })
     }
     else if (type === 'brand') {
-        Brand.findOne({ slug }).exec((error, brand) => {
+        Brand.findOne({ slug, isDisable: { $ne: true } }).exec((error, brand) => {
             if (error) return res.status(400).json({ error })
             if (brand) {
                 Product.find({ brand: brand._id })
@@ -196,7 +196,7 @@ exports.getProductsBySlug = (req, res) => {
 exports.getProductById = (req, res) => {
     const { _id } = req.body
     if (_id) {
-        Product.findOne({ _id })
+        Product.findOne({ _id, isDisable: { $ne: true }})
             .populate({ path: "category", select: "_id name categoryImage" })
             .populate({ path: "brand", select: "_id name brandImage" })
             .populate('sizes')
@@ -221,7 +221,7 @@ exports.getProductById = (req, res) => {
 exports.getProductDetailsBySlug = (req, res) => {
     const { slug } = req.params
     if (slug) {
-        Product.findOne({ slug })
+        Product.findOne({ slug, isDisable: { $ne: true }})
             .populate({ path: "category", select: "_id name categoryImage" })
             .populate({ path: "brand", select: "_id name brandImage" })
             .populate('sizes')
@@ -253,7 +253,7 @@ exports.getProductDetailsBySlug = (req, res) => {
 exports.deleteProductById = (req, res) => {
     const { productId } = req.body.payload
     if (productId) {
-        Product.deleteOne({ _id: productId })
+        Product.updateOne({ _id: productId }, { isDisabled: true })
             .exec((error, result) => {
                 if (error) return res.status(400).json({ error })
                 if (result) {
@@ -269,7 +269,7 @@ exports.deleteProductById = (req, res) => {
 
 exports.getProducts = async (req, res) => {
     try {
-        const products = await Product.find({})
+        const products = await Product.find({ isDisable: { $ne: true } })
             .populate({ path: "category", select: "_id name categoryImage" })
             .populate({ path: "brand", select: "_id name brandImage" })
             .populate({
@@ -296,7 +296,7 @@ exports.getProducts = async (req, res) => {
 
 exports.searchByProductName = async (req, res) => {
     const { text } = req.body
-    const products = await Product.find({ $text: { $search: text } })
+    const products = await Product.find({ $text: { $search: text }, isDisable: { $ne: true } })
         .populate({ path: "category", select: "_id name categoryImage" })
         .populate({ path: "brand", select: "_id name brandImage" })
         .populate('sizes')

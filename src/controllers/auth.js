@@ -41,7 +41,7 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
     try {
-        const existingUser = await User.findOne({ email: req.body.email })
+        const existingUser = await User.findOne({ email: req.body.email, isDisable: { $ne: true }})
         if (existingUser) {
             const isPasswordMatch = await existingUser.authenticate(req.body.password)
             if (isPasswordMatch) {
@@ -79,7 +79,7 @@ exports.signinWithGoogle = async (req, res) => {
             audience: client_id,
         })
         const { name, email, picture } = ticket.getPayload()
-        const existingUser = await User.findOne({ email })
+        const existingUser = await User.findOne({ email , isDisable: { $ne: true }})
         if (existingUser) {
             const { _id, name, email, profilePicture, role } = existingUser
             const accessToken = await generateAccessToken({ _id, email, role })
@@ -106,7 +106,7 @@ exports.signinWithGoogle = async (req, res) => {
 
 exports.isUserLoggedIn = async (req, res) => {
     try {
-        const userObj = await User.findOne({ _id: req.user._id })
+        const userObj = await User.findOne({ _id: req.user._id, isDisable: { $ne: true }})
         const { _id, name, email, role, profilePicture } = userObj
         const user = { _id, name, email, role, profilePicture }
         res.status(200).json({ user })
