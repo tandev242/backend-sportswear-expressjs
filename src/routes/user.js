@@ -4,7 +4,7 @@ const { updateUser, getUsers, deleteUserById, updateUserInfo } = require('../con
 
 const router = express.Router();
 
-router.post('/user/getUsers', requireSignin, adminMiddleware, getUsers);
+router.post('/user/getUsers', getUsers);
 router.post('/user/update', requireSignin, adminMiddleware, updateUser);
 router.post('/user/updateUserInfo', requireSignin, userMiddleware, uploadCloud.single("profilePicture"), updateUserInfo);
 router.post('/user/delete', requireSignin, adminMiddleware, deleteUserById);

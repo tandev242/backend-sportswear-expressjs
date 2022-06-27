@@ -22,6 +22,7 @@ const sizeRoutes = require('./routes/size');
 const userRoutes = require('./routes/user');
 const statisticRoutes = require('./routes/statistic');
 const recomRoutes = require('./routes/recom');
+const behaviorRoutes = require('./routes/behavior');
 
 
 env.config();
@@ -58,7 +59,7 @@ app.use("/api", sizeRoutes);
 app.use("/api", userRoutes);
 app.use("/api", statisticRoutes);
 app.use("/api", recomRoutes);
-
+app.use("/api", behaviorRoutes);
 
 const sslServer = https.createServer({
     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
