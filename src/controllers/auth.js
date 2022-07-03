@@ -3,6 +3,7 @@ const Otp = require("../models/otp")
 const bcrypt = require("bcrypt")
 const { sendOtp } = require("../services/mailer")
 const { OAuth2Client } = require("google-auth-library")
+const shortid = require("shortid");
 const client_id = process.env.GOOGLE_CLIENT_ID
 const client = new OAuth2Client(client_id)
 const {
@@ -26,6 +27,7 @@ exports.signup = async (req, res) => {
             name,
             email,
             password: hashedPassword,
+            username: "NM" + shortid.generate()
         })
         if (newUser) {
             let { _id, name, email, role } = newUser;
@@ -41,7 +43,7 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
     try {
-        const existingUser = await User.findOne({ email: req.body.email, isDisable: { $ne: true }})
+        const existingUser = await User.findOne({ email: req.body.email, isDisabled: { $ne: true }})
         if (existingUser) {
             const isPasswordMatch = await existingUser.authenticate(req.body.password)
             if (isPasswordMatch) {
@@ -79,7 +81,7 @@ exports.signinWithGoogle = async (req, res) => {
             audience: client_id,
         })
         const { name, email, picture } = ticket.getPayload()
-        const existingUser = await User.findOne({ email , isDisable: { $ne: true }})
+        const existingUser = await User.findOne({ email , isDisabled: { $ne: true }})
         if (existingUser) {
             const { _id, name, email, profilePicture, role } = existingUser
             const accessToken = await generateAccessToken({ _id, email, role })
@@ -91,6 +93,7 @@ exports.signinWithGoogle = async (req, res) => {
                 name,
                 email,
                 profilePicture: picture,
+                username: "NM" + shortid.generate()
             }
             let user = await User.create(newUser)
             const { _id, name, email, profilePicture, role } = user
@@ -106,7 +109,7 @@ exports.signinWithGoogle = async (req, res) => {
 
 exports.isUserLoggedIn = async (req, res) => {
     try {
-        const userObj = await User.findOne({ _id: req.user._id, isDisable: { $ne: true }})
+        const userObj = await User.findOne({ _id: req.user._id, isDisabled: { $ne: true }})
         const { _id, name, email, role, profilePicture } = userObj
         const user = { _id, name, email, role, profilePicture }
         res.status(200).json({ user })

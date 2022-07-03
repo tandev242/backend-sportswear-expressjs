@@ -28,7 +28,7 @@ exports.deleteBrands = async (req, res) => {
     for (let i = 0; i < ids.length; i++) {
         const brand = await Brand.findOneAndDelete({
             _id: ids[i]._id
-        },{ isDisabled: true });
+        },{ isDisabledd: true });
         deletedBrands.push(brand);
     }
 
@@ -58,7 +58,7 @@ exports.updateBrands = async (req, res) => {
 }
 
 exports.getBrands = (req, res) => {
-    Brand.find({ isDisable: { $ne: true }}).exec((error, brands) => {
+    Brand.find({ isDisabled: { $ne: true }}).exec((error, brands) => {
         if (error) {
             return res.status(400).json({ error })
         }

@@ -53,7 +53,7 @@ exports.addCategory = (req, res) => {
 
 
 exports.getCategories = (req, res) => {
-    Category.find({ isDisable: { $ne: true } }).exec((error, categories) => {
+    Category.find({ isDisabled: { $ne: true } }).exec((error, categories) => {
         if (error) {
             return res.status(400).json({ error })
         } else {
@@ -80,7 +80,7 @@ exports.deleteCategories = async (req, res) => {
     for (let i = 0; i < ids.length; i++) {
         const deleteCategory = await Category.findOneAndUpdate({
             _id: ids[i]._id
-        }, { isDisabled: true });
+        }, { isDisabledd: true });
         deletedCategories.push(deleteCategory);
     }
 
