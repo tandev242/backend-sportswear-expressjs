@@ -80,7 +80,7 @@ exports.deleteCategories = async (req, res) => {
     for (let i = 0; i < ids.length; i++) {
         const deleteCategory = await Category.findOneAndUpdate({
             _id: ids[i]._id
-        }, { isDisabledd: true });
+        }, { isDisabled: true });
         deletedCategories.push(deleteCategory);
     }
 

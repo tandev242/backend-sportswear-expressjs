@@ -28,7 +28,7 @@ exports.deleteBrands = async (req, res) => {
     for (let i = 0; i < ids.length; i++) {
         const brand = await Brand.findOneAndDelete({
             _id: ids[i]._id
-        },{ isDisabledd: true });
+        },{ isDisabled: true });
         deletedBrands.push(brand);
     }
 
