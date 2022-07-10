@@ -27,9 +27,9 @@ const createCategories = (categories, parentId = null) => {
 
 
 exports.initData = async (req, res) => {
-    const categories = await Category.find({}).exec();
-    const brands = await Brand.find({}).exec();
-    const products = await Product.find({})
+    const categories = await Category.find({ isDisabled: { $ne: true } })
+    const brands = await Brand.find({ isDisabled: { $ne: true } })
+    const products = await Product.find({ isDisabled: { $ne: true } })
         .populate({ path: "category", select: "_id name" })
         .populate({ path: "brand", select: "_id name" })
         .populate('sizes')
@@ -38,13 +38,13 @@ exports.initData = async (req, res) => {
                 path: "size", select: "_id size description"
             }
         })
-        .exec();
+        
     const orders = await Order.find({})
         .populate("items.productId", "name")
         .populate("items.sizeId", "size")
-        .exec();
-    const sizes = await Size.find({}).exec();
-    const users = await User.find({}).exec();
+        
+    const sizes = await Size.find({})
+    const users = await User.find({ isDisabled: { $ne: true } })
     res.status(200).json({
         categories: createCategories(categories),
         brands,

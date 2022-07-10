@@ -9,6 +9,8 @@ const router = express.Router()
 router.post('/deliveryInfo/add', 
     validateAddDeliveryInfoRequest,
     isRequestValidated,
+    requireSignin, 
+    userMiddleware, 
     addDeliveryInfo)
 router.get('/deliveryInfo/get', requireSignin, userMiddleware, getDeliveryInfo);
 router.post('/deliveryInfo/delete', requireSignin, userMiddleware, deleteDeliveryInfo);
