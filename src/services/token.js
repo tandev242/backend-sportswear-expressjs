@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken")
 const redis = require('redis')
 
-const client = redis.createClient({
-    host: 'redis',
-    legacyMode: true
-})
+// const client = redis.createClient({
+//     host: 'redis',
+//     legacyMode: true
+// })
 
-// const client = redis.createClient()
+const client = redis.createClient()
 
 const createError = require('http-errors')
 

@@ -1,4 +1,21 @@
 const Cart = require("../models/cart");
+const Product = require("../models/product");
+
+const isOutOfStock = async (cartItems) => {
+    try {
+        for (const item of cartItems) {
+            const product = await Product.findOne({ _id: item.product })
+            for (const size of product.sizes) {
+                if (size.quantity >= item.quantity && size.size == item.size) {
+                    return false
+                }
+            }
+        }
+        return true
+    } catch (error) {
+        return true
+    }
+}
 
 function runUpdate(condition, updateData) {
     return new Promise((resolve, reject) => {
@@ -12,11 +29,15 @@ function runUpdate(condition, updateData) {
 exports.addToCart = (req, res) => {
     const { cartItems } = req.body;
     if (cartItems) {
-        Cart.findOne({ user: req.user._id }).exec((error, cart) => {
+        Cart.findOne({ user: req.user._id }).exec(async (error, cart) => {
             if (error) return res.status(400).json({ error });
             // neu cart ton tai thi add CartItems vao nguoc lai thi khoi tao cart
             if (cart) {
                 let promiseArray = [];
+                const isOut = await isOutOfStock(cartItems)
+                if (isOut) {
+                    return res.status(400).json({ error: "Product is out of stock !" });
+                }
                 cartItems.forEach((cartItem) => {
                     const product = cartItem.product;
                     const size = cartItem.size;

@@ -67,6 +67,6 @@ const sslServer = https.createServer({
 }, app)
 
 
-sslServer.listen(process.env.PORT, () => {
-    console.log(`Secure Server is running on port ${process.env.PORT}`);
+app.listen(process.env.PORT, () => {
+    console.log(`Server is running on port ${process.env.PORT}`);
 })

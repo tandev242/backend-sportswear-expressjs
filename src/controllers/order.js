@@ -5,19 +5,23 @@ const Product = require("../models/product");
 const https = require('https');
 const crypto = require('crypto');
 
+const isOutOfStock = async (items) => {
+    try {
+        for (const item of items) {
+            const product = await Product.findOne({ _id: item.productId })
+            for (const size of product.sizes) {
+                if (size.quantity >= item.purchaseQty && size.size == item.sizeId) {
+                    return false
+                }
+            }
+        }
+        return true
+    } catch (error) {
+        return true
+    }
+}
 
-// const isEnoughQuantityInStock = async (productItem) => {
-//     try {
-//         await Product.updateOne({ _id: productItem.productId, "sizes._id": productItem.sizeId },
-//             { $inc: { "sizes.$[arr].quantity": productItem.purchaseQty } },
-//             { arrayFilters: [{ "arr.quantity": { $gt: 0 } }] }
-//         ).exec()
-//         return true
-//     } catch (error) {
-//         return false;
-//     }
-// }
-exports.addOrder = (req, res) => {
+exports.addOrder = async (req, res) => {
     const { items, addressId, totalAmount, paymentStatus, paymentType } = req.body;
     const orderStatus = [
         {
@@ -38,13 +42,23 @@ exports.addOrder = (req, res) => {
             isCompleted: false,
         },
     ]
-    // if (isEnoughQuantityInStock(item)) {} else {
-    //     return res.status(400).json({ error: "Out of Stock" });
-    // }
-    items.forEach((item) => {
+    const isOut = await isOutOfStock(items)
+    if (isOut) {
+        return res.status(400).json({ error: "Product is out of stock !" });
+    }
+
+    for (let item of items) {
         const productId = item.productId;
         const sizeId = item.sizeId;
         if (productId) {
+            Product.updateOne({ _id: productId, "sizes.size": sizeId },
+                { $inc: { "sizes.$.quantity": -item.purchaseQty } },
+                { arrayFilters: [ { "sizes.quantity": { $gt: 0 } } ]}
+                )
+                .exec((error, result) => {
+                    if (error)
+                        return res.status(400).json({ error: "Can't decrease quantity of product in warehouse" })
+                });
             Cart.updateOne(
                 { user: req.user._id },
                 {
@@ -60,7 +74,7 @@ exports.addOrder = (req, res) => {
                     return res.status(400).json({ error });
             });
         }
-    })
+    }
 
     const order = new Order({
         user: req.user._id,
@@ -71,6 +85,7 @@ exports.addOrder = (req, res) => {
         paymentType,
         orderStatus
     })
+
     order.save((error, order) => {
         if (error) return res.status(400).json({ error });
         if (order) {
@@ -103,10 +118,18 @@ exports.addOrderByPaymentMomo = (req, res) => {
         },
     ]
 
-    items.map((item) => {
+    for (let item of items) {
         const productId = item.productId;
         const sizeId = item.sizeId;
         if (productId) {
+            Product.updateOne({ _id: productId, "sizes.size": sizeId },
+                { $inc: { "sizes.$.quantity": -item.purchaseQty } },
+                { arrayFilters: [ { "sizes.quantity": { $gt: 0 } } ]}
+                )
+                .exec((error, result) => {
+                    if (error)
+                        return res.status(400).json({ error: "Can't decrease quantity of product in warehouse" })
+                });
             Cart.updateOne(
                 { user: userId },
                 {
@@ -122,7 +145,7 @@ exports.addOrderByPaymentMomo = (req, res) => {
                     return res.status(400).json({ error });
             });
         }
-    })
+    }
 
     const order = new Order({
         user: userId,

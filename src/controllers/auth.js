@@ -83,24 +83,26 @@ exports.signinWithGoogle = async (req, res) => {
         const { name, email, picture } = ticket.getPayload()
         const existingUser = await User.findOne({ email , isDisabled: { $ne: true }})
         if (existingUser) {
-            const { _id, name, email, profilePicture, role } = existingUser
+            const { _id, profilePicture, role } = existingUser
             const accessToken = await generateAccessToken({ _id, email, role })
             const refreshToken = await generateRefreshToken({ _id, email, role })
             // response token and user info
             res.status(201).json({ accessToken, refreshToken, user: { _id, name, email, profilePicture, role } })
         } else {
+            const hashedPassword = await bcrypt.hash(shortid.generate(), 10)
             const newUser = {
                 name,
                 email,
                 profilePicture: picture,
+                password: hashedPassword,
                 username: "NM" + shortid.generate()
             }
             let user = await User.create(newUser)
-            const { _id, name, email, profilePicture, role } = user
+            const { _id, role } = user
             const accessToken = await generateAccessToken({ _id, email, role })
             const refreshToken = await generateRefreshToken({ _id, email, role })
             // response token and user info
-            res.status(201).json({ accessToken, refreshToken, user: { _id, name, email, profilePicture, role } })
+            res.status(201).json({ accessToken, refreshToken, user: { _id, name , email, profilePicture, role } })
         }
     } catch (error) {
         res.status(400).json({ error })
